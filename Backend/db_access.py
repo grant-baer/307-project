@@ -13,9 +13,9 @@ from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
 
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-# load_dotenv()
+load_dotenv()
 
 import os
 
