@@ -147,28 +147,37 @@ def login():
             )
         else:
             # Incorrect password
+            print("bad pwd")
             return (
-                jsonify(
-                    {"message": "Login failed, incorrect username or password"}
-                ),
+                jsonify({"message": "Login failed, incorrect password"}),
                 401,
             )
     except DoesNotExist:
         # Username does not exist
+        print("bad user")
         return (
-            jsonify(
-                {"message": "Login failed, incorrect username or password"}
-            ),
+            jsonify({"message": "Login failed, invalid username"}),
             401,
         )
     except KeyError:
         # Username or password not provided
-        return (
-            jsonify(
-                {"message": "Login failed, must provide username and password"}
-            ),
-            400,
-        )
+        if not data["username"] and data["password"]:
+            return (
+                jsonify(
+                    {"message": "Login failed, missing username and password"}
+                ),
+                400,
+            )
+        elif not data["username"]:
+            return (
+                jsonify({"message": "Login failed, missing username"}),
+                400,
+            )
+        else:
+            return (
+                jsonify({"message": "Login failed, missing password"}),
+                400,
+            )
     except Exception as e:
         # Catch any other errors
         print(f"Error during login: {str(e)}")
