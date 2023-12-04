@@ -1,7 +1,11 @@
 import os
 from flask import Flask, request, jsonify
-from flask_jwt_extended import JWTManager, \
-    create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
 
 import requests
 from flask_cors import CORS, cross_origin
@@ -21,7 +25,7 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
 
-app.config['JWT_SECRET_KEY'] = "CHANGE_TO_SECURE_KEY"
+app.config["JWT_SECRET_KEY"] = "CHANGE_TO_SECURE_KEY"
 jwt = JWTManager(app)
 
 DB_ACCESS_URL = (  # This is where db_access.py is running.
@@ -106,7 +110,7 @@ def login():
                         "access_token": access_token,
                     }
                 ),
-                200,
+                500,
             )
         else:
             # Incorrect password
