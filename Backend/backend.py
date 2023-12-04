@@ -1,11 +1,13 @@
 import os
 from flask import Flask, request, jsonify
+from flask_jwt_extended import JWTManager, \
+    create_access_token, jwt_required, get_jwt_identity
+
 import requests
 from flask_cors import CORS, cross_origin
 
 from mongoengine import connect, Document, StringField, DoesNotExist
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import secrets  # For generating a session key
 
 from datetime import datetime
@@ -17,6 +19,9 @@ from db_access import Image
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
+
+app.config['JWT_SECRET_KEY'] = "CHANGE_TO_SECURE_KEY"
+jwt = JWTManager(app)
 
 DB_ACCESS_URL = (  # This is where db_access.py is running.
     "http://127.0.0.1:5001"
@@ -86,7 +91,8 @@ def login():
         if check_password_hash(user.encrypted_password, data["password"]):
             # Generate session key/token
             # This is just a placeholder for an actual session key/token
-            session_key = secrets.token_hex(16)
+            # session_key = secrets.token_hex(16)
+            access_token = create_access_token(identity=str(user.username))
             # You would store this session key in a session store or database
             # with a reference to the user and a valid time period
 
@@ -95,7 +101,7 @@ def login():
                 jsonify(
                     {
                         "message": "Logged in successfully!",
-                        "session_key": session_key,
+                        "access_token": access_token,
                     }
                 ),
                 200,
@@ -126,6 +132,7 @@ def login():
         )
     except Exception as e:
         # Catch any other errors
+        print(f"Error during login: {str(e)}")
         return jsonify({"message": str(e)}), 500
 
 
