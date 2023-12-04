@@ -1,4 +1,4 @@
-(https://github.com/grant-baer/docs/actions/workflows/main.yml/badge.svg)
+(https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/main.yml/badge.svg)
 
 # Picture Perfect Project
 
