@@ -57,6 +57,7 @@ const Register = () => {
     return emailPattern.test(email);
   };
 
+  /* handle registration form submission */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { username, email, password, confirmPassword } = formData;
