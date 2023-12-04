@@ -11,8 +11,9 @@ class TestDBAccess(unittest.TestCase):
             "password": "test_password",
         }
         response = create_user(data)
+        print(f"response={response.message},response={response.status_code}")
         assert (
-            response.status_code == 200
+            response.status_code == 201
             and response.message == "User created successfully!"
         )
 
