@@ -12,9 +12,10 @@ import json
 from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
-from dotenv import load_dotenv
 
-load_dotenv()
+# from dotenv import load_dotenv
+
+# load_dotenv()
 
 import os
 
@@ -23,6 +24,12 @@ app = Flask(__name__)
 # MongoDB connection
 mongo_uri = os.environ.get("MONGO_URI")
 connect(host=mongo_uri)
+
+
+class Response:
+    def __init__(self, message, status_code) -> None:
+        self.status_code = status_code
+        self.message = message
 
 
 class User(Document):
@@ -43,39 +50,8 @@ class Image(Document):
     meta = {"collection": "images"}
 
 
-@app.route("/create_test_user", methods=["POST"])
-def create_test_user():
-    user = User(
-        username="bob",
-        encrypted_password="pwd",
-        email="bob@gmail.com",
-    )
-    try:
-        user.save()
-        return (
-            jsonify(
-                {
-                    "message": "User created successfully!",
-                    "user_id": str(user.id),
-                }
-            ),
-            201,
-        )
-    except NotUniqueError:
-        return (
-            jsonify(
-                {
-                    "error": """Username or email already exists.
-                                 Choose another."""
-                }
-            ),
-            400,
-        )
-
-
-@app.route("/create_user", methods=["POST"])
-def create_user():
-    data = json.loads(request.data.decode("utf-8"))
+def create_user(data):
+    data = data
     user = User(
         username=data["username"],
         encrypted_password=data["password"],
@@ -83,100 +59,30 @@ def create_user():
     )
     try:
         user.save()
-        return (
-            jsonify(
-                {
-                    "message": "User created successfully!",
-                    "user_id": str(user.id),
-                }
-            ),
-            201,
-        )
-    except:
-        return (
-            jsonify(
-                {
-                    "message": "Internal server error",
-                }
-            ),
-            500,
-        )
+        print(f"successfully added user {user.username}")
+        return Response("User created successfully!", 201)
+    except Exception as e:
+        return Response(f"Internal server error {e}", 500)
 
 
-@app.route("/create_image", methods=["POST"])
-def create_image():
-    data = request.get_json()
-
-    # Retrieve the user by ObjectId
-    creator = User.objects.get(id=data["creator"])
-
-    # Associate the image with the user and save it
-    image = Image(creator=creator, prompt=data["prompt"], url=data["url"])
-    image.save()
-
-    return (
-        jsonify(
-            {
-                "message": "Image data added successfully!",
-                "image_id": str(image.id),
-            }
-        ),
-        201,
-    )
-
-
-@app.route("/users", methods=["GET"])
-def get_users():
-    data = json.loads(request.data.decode("utf-8"))
+def get_user(data):
+    # data = json.loads(data.decode("utf-8"))
     user = User.objects(username=data["username"]).first()
     print(f"user={user}")
     if user:
-        return (
-            jsonify(
-                {
-                    "error": """Username already exists.
-                                 Choose another."""
-                }
-            ),
+        return Response(
+            "Username already exists. Choose another.",
             401,
         )
     user = User.objects(email=data["email"]).first()
     print(f"user={user}")
     if user:
-        return (
-            jsonify(
-                {
-                    "error": """Email already exists.
-                                 Choose another."""
-                }
-            ),
+        return Response(
+            "Email already exists. Choose another.",
             401,
         )
     if user is None:
-        return (
-            jsonify({"error": """User credentials are unique"""}),
+        return Response(
+            "User credentials are unique.",
             200,
         )
-
-
-@app.route("/images")
-def get_images():
-    images = Image.objects.all()
-    return jsonify(
-        [
-            {
-                "creator_id": str(
-                    image.creator.id
-                ),  # updated from user to creator
-                "prompt": image.prompt,
-                "url": image.url,
-                "votes": image.votes,
-                "image_id": str(image.id),
-            }
-            for image in images
-        ]
-    )
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001, debug=True)
