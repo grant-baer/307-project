@@ -15,6 +15,7 @@ from datetime import datetime
 from db_access import User
 from db_access import Image
 from db_access import get_user, create_user
+from db_access import get_image, create_image
 
 
 app = Flask(__name__)
@@ -30,7 +31,10 @@ DB_ACCESS_URL = (  # This is where db_access.py is running.
 
 
 @app.route("/generate_image", methods=["POST"])
+@jwt_required()
 def generate_image():
+    current_user = get_jwt_identity()
+
     data = request.get_json()
     url = "https://imagegolf.io/api/generate"
     url_data = {"inputValue": data["prompt"]}
@@ -41,45 +45,64 @@ def generate_image():
 
 
 @app.route("/store_image", methods=["POST"])
+@jwt_required()
 def store_image():
+    current_user = get_jwt_identity()  # Gets the identity of the current user
+
     data = request.get_json()
     # Validate required fields
-    required_fields = ["creator", "prompt", "url"]
+    required_fields = ["prompt", "url"]
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
-    # Retrieve creator user by user
-    try:
-        creator = User.objects.get(username=data["creator"])
-    except DoesNotExist:
-        return jsonify({"error": "Creator user does not exist."}), 404
-    except Exception as e:
-        return jsonify({"error": str(e)}), 400
-    try:
-        # votes default to 0 as defined in the Image class
-        # timestamp can be added if we want to have more variation
-        # between similar objects
-        image = Image(creator=creator, prompt=data["prompt"], url=data["url"])
-        image.save()
-        return (
-            jsonify(
-                {
-                    "message": "Image submitted successfully!",
-                    "image_id": str(image.id),
-                    # if you wish to return the timestamp when
-                    # the image was stored
-                    "timestamp": datetime.utcnow(),
-                }
-            ),
-            201,
-        )
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    data = request.get_json()
-    text = data["text"]
 
-    print(text)
-    return jsonify({"message": "Text logged successfully!"})
+    # Prepare the data for creating an image
+    image_data = {
+        "creator": current_user,  # Assuming the creator is the logged-in user
+        "prompt": data["prompt"],
+        "url": data["url"]
+    }
+
+    # Call the create_image function from db_access
+    response = create_image(image_data)
+
+    # Handle the response
+    if response.status_code == 201:
+        print("Image created successfully!")
+        return jsonify({"message": "Image submitted successfully!"}), 201
+    else:
+        print(f"Failed to create image: {response.message}")
+        return jsonify({"message": response.message}), response.status_code
+
+
+@app.route("/fetch_portfolio", methods=["GET"])
+@jwt_required()
+def fetch_portfolio():
+    current_user_username = get_jwt_identity()  # Get the username from the JWT token
+
+    try:
+        # Retrieve the user by username
+        user = User.objects.get(username=current_user_username)
+
+        # Fetch all images created by this user
+        user_images = Image.objects(creator=user)
+
+        # Format the response with the list of images
+        portfolio = [{
+            "image_id": str(image.id),
+            "prompt": image.prompt,
+            "url": image.url,
+            "creator": user
+        } for image in user_images]
+
+        return jsonify(portfolio), 200
+
+    except DoesNotExist:
+        # If the user is not found
+        return jsonify({"error": "User not found"}), 404
+    except Exception as e:
+        # Handle any other exceptions
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/login", methods=["POST"])
@@ -140,6 +163,7 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
+
     data = request.get_json()
 
     # Validate required fields
@@ -160,6 +184,7 @@ def register():
     username = data["username"]
     plain_text_password = data["password"]
     email = data["email"]
+    portfolio = [] #initialized to []
 
     # Hash the password
     hashed_password = generate_password_hash(
@@ -171,6 +196,7 @@ def register():
         "username": username,
         "email": email,
         "password": hashed_password,
+        "portfolio": portfolio,
     }
     response = get_user(user_data)
     if response.status_code == 401:
