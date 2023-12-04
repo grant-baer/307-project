@@ -1,22 +1,32 @@
 import os
 from flask import Flask, request, jsonify
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
+
 import requests
 from flask_cors import CORS, cross_origin
 
 from mongoengine import connect, Document, StringField, DoesNotExist
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 import secrets  # For generating a session key
 
 from datetime import datetime
 
 from db_access import User
 from db_access import Image
+from db_access import get_user, create_user
 
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config["CORS_HEADERS"] = "Content-Type"
+
+app.config["JWT_SECRET_KEY"] = "CHANGE_TO_SECURE_KEY"
+jwt = JWTManager(app)
 
 DB_ACCESS_URL = (  # This is where db_access.py is running.
     "http://127.0.0.1:5001"
@@ -32,6 +42,39 @@ def generate_image():
     r = requests.post(url, json=url_data)
 
     return r.json()
+
+#gets a random image from the database
+@app.route("/get_random_image", methods=["GET"])
+def get_random_image():
+    try:
+        # Randomly select an image
+        image = Image.objects.aggregate([{'$sample': {'size': 1}}]).next()
+        return jsonify(image), 200
+    except StopIteration:
+        # No images found in the database
+        return jsonify({"error": "No images available"}), 404
+    except Exception as e:
+        # Handle other exceptions
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/update_image_elo", methods=["POST"])
+def update_image_elo():
+    data = request.get_json()
+    try:
+        # Update Image One
+        image_one = Image.objects.get(id=data["imageIdOne"])
+        image_one.votes = data["newEloOne"]
+        image_one.save()
+
+        # Update Image Two
+        image_two = Image.objects.get(id=data["imageIdTwo"])
+        image_two.votes = data["newEloTwo"]
+        image_two.save()
+
+        return jsonify({"message": "ELO ratings updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 @app.route("/store_image", methods=["POST"])
@@ -60,7 +103,8 @@ def store_image():
                 {
                     "message": "Image submitted successfully!",
                     "image_id": str(image.id),
-                    # if you wish to return the timestamp when the image was stored
+                    # if you wish to return the timestamp when
+                    # the image was stored
                     "timestamp": datetime.utcnow(),
                 }
             ),
@@ -82,12 +126,12 @@ def login():
     try:
         # Authenticate the user
         user = User.objects.get(username=data["username"])
-
         # Verify password (assuming passwords are hashed before storing)
         if check_password_hash(user.encrypted_password, data["password"]):
             # Generate session key/token
             # This is just a placeholder for an actual session key/token
-            session_key = secrets.token_hex(16)
+            # session_key = secrets.token_hex(16)
+            access_token = create_access_token(identity=str(user.username))
             # You would store this session key in a session store or database
             # with a reference to the user and a valid time period
 
@@ -96,7 +140,7 @@ def login():
                 jsonify(
                     {
                         "message": "Logged in successfully!",
-                        "session_key": session_key,
+                        "access_token": access_token,
                     }
                 ),
                 200,
@@ -136,19 +180,8 @@ def login():
             )
     except Exception as e:
         # Catch any other errors
+        print(f"Error during login: {str(e)}")
         return jsonify({"message": str(e)}), 500
-
-
-@app.route("/create_user", methods=["POST"])
-def create_user():
-    print("received register request")
-    print(request, request.data)
-    return jsonify(
-        {
-            """message": "No endpoint called create_user,
-            perhaps you meant: /register"""
-        }
-    )
 
 
 @app.route("/register", methods=["POST"])
@@ -176,7 +209,7 @@ def register():
 
     # Hash the password
     hashed_password = generate_password_hash(
-        plain_text_password, method="sha256"
+        plain_text_password, method="scrypt"
     )
 
     # Prepare the user data with the hashed password
@@ -185,22 +218,22 @@ def register():
         "email": email,
         "password": hashed_password,
     }
-
+    response = get_user(user_data)
+    if response.status_code == 401:
+        print(f"responsey={response.message}")
+        return (
+            jsonify({"message": response.message}),
+            400,
+        )
     # Send the user data with the hashed password to the database access layer
-    response = requests.post(f"{DB_ACCESS_URL}/create_user", json=user_data)
-
+    response = create_user(user_data)
     # Handle the response from the database access layer
     if response.status_code == 201:
         print("User created successfully!")
         return jsonify({"message": "User logged successfully!"})
-    elif response.status_code == 400:
-        print("Duplicate username, please choose another")
-        return jsonify(
-            {"message": "Duplicate username, please choose another!"}
-        )
     else:
         print("Failed to create user!")
-        return jsonify({"message": "Failed to create user!!"})
+        return jsonify({"message": "Failed to create user!!"}), 500
 
 
 if __name__ == "__main__":

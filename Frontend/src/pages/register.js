@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { Tooltip } from "react-tooltip";
 import { AiFillQuestionCircle } from "react-icons/ai";
 import Link from "next/link";
+import Error from "next/error";
 
 const Register = () => {
   const router = useRouter();
@@ -56,6 +57,7 @@ const Register = () => {
     return emailPattern.test(email);
   };
 
+  /* handle registration form submission */
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { username, email, password, confirmPassword } = formData;
@@ -91,13 +93,22 @@ const Register = () => {
     try {
       console.log("try");
       const response = await axios.post(
-        "http://localhost:5000/create_user",
+        "http://localhost:5000/register",
         formData
       );
-      console.log("response", response);
-      router.push("/portfolio");
+      router.push("/login");
       return response;
     } catch (error) {
+      console.log("err", error);
+      if (error != null) {
+        if (error.response.data.message.toLowerCase().includes("username")) {
+          setUsernameError("Username already taken.");
+        } else if (
+          error.response.data.message.toLowerCase().includes("email")
+        ) {
+          setEmailError("Email already taken.");
+        } else throw new Error("Unknown registration error");
+      }
       console.log(error);
       return false;
     }

@@ -5,6 +5,7 @@ import axios from "axios";
 import "tailwindcss/tailwind.css"; // Import Tailwind CSS
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Cookies from "js-cookie";
 
 const Login = () => {
   const router = useRouter();
@@ -37,7 +38,11 @@ const Login = () => {
         formData
       );
       console.log("response", response);
-      localStorage.setItem("session_key", response.data.session_key);
+
+
+      // Store the token in cookie
+      Cookies.set("token", response.data.access_token, { expires: 7, path: "/" });
+
       router.push("/portfolio");
       return response;
     } catch (error) {

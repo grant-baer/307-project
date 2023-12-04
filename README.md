@@ -1,6 +1,6 @@
+![badge](https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/main_picture-perfect.yml/badge.svg)
+
 # Picture Perfect Project
-
-
 
 ## Code Style Guide
 
@@ -78,15 +78,15 @@ After installing the plugins, configure your settings to format on save, which c
 
 ```json
 {
-    "editor.formatOnSave": true,
-    "eslint.autoFixOnSave": true,
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "next",
-        "next/core-web-vitals"
-    ],
-    "prettier.disableLanguages": []
+  "editor.formatOnSave": true,
+  "eslint.autoFixOnSave": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "next",
+    "next/core-web-vitals"
+  ],
+  "prettier.disableLanguages": []
 }
 ```
 
@@ -101,30 +101,13 @@ For other IDEs, please refer to the respective plugin installation and configura
 Remember to commit the style configuration files for ESLint and Prettier (`.eslintrc`, `.prettierrc`, etc.) to your project repository so that all contributors use consistent settings.
 
 **Considerations**
-- User Auth
-- Interface
-      - sign in
-      - user portfolio
-      - image generating (on users own portfolio)
-      - voting
-      - leaderboard (best creator/image)
-- API cost
-      - estimate cost for Klingenberg to cover
-- Image storage
-      - use urls for faster loading speed
-      - openAI can host image URLs
-  
 
-**Programs:** 
-Python Flask (Backend), 
+- User Auth
+- Interface - sign in - user portfolio - image generating (on users own portfolio) - voting - leaderboard (best creator/image)
+- API cost - estimate cost for Klingenberg to cover
+- Image storage - use urls for faster loading speed - openAI can host image URLs
+
+**Programs:**
+Python Flask (Backend),
 React via next.js (Frontend)
 MongoDB (DB)
-
-
-
-
-
-
-
-
-
