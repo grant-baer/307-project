@@ -1,5 +1,6 @@
 // Import React
 import React from "react";
+import Link from "next/link";
 
 // NavBar Component
 const NavBar = () => {
@@ -10,38 +11,38 @@ const NavBar = () => {
           <div className="flex space-x-7">
             <div>
               {/* Brand Logo */}
-              <a href="/" className="flex items-center py-4 px-2">
+              <Link href="/" className="flex items-center py-4 px-2">
                 <span className="font-semibold text-blue-500 text-lg">
                   PicturePerfect
                 </span>
-              </a>
+              </Link>
             </div>
             {/* Primary Navbar items */}
             <div className="hidden md:flex items-center space-x-1">
-              <a
+              <Link
                 href="/"
                 className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
               >
                 Home
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/vote"
                 className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
               >
                 Vote
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/portfolio"
                 className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
               >
                 Portfolio
-              </a>
-              <a
+              </Link>
+              <Link
                 href="/leaderboard"
                 className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
               >
                 leaderboard
-              </a>
+              </Link>
             </div>
           </div>
           {/* Mobile menu button */}
@@ -67,36 +68,36 @@ const NavBar = () => {
       <div className="hidden mobile-menu">
         <ul className="">
           <li>
-            <a
+            <Link
               href="/"
               className="block text-sm px-2 py-4 text-white bg-blue-500 font-semibold"
             >
               Home
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/Vote"
               className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
             >
               Vote
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/Portfolio"
               className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
             >
               Portfolio
-            </a>
+            </Link>
           </li>
           <li>
-            <a
+            <Link
               href="/leaderboard"
               className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
             >
               leaderboard
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

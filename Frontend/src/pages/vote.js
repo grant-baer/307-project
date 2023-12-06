@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import eloRating from "elo-rating";
 import axios from "axios"; // Import axios for API requests
@@ -52,7 +52,7 @@ export default function Vote() {
       </h1>
       <div className="flex justify-center gap-10 mb-4">
         <div className="text-center">
-          <img
+          <Image
             src={imageOne.url}
             alt="Image One"
             className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer"
@@ -61,7 +61,7 @@ export default function Vote() {
           <p className="mt-2 text-lg font-semibold">ELO: {eloOne}</p>
         </div>
         <div className="text-center">
-          <img
+          <Image
             src={imageTwo.url}
             alt="Image Two"
             className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer"
