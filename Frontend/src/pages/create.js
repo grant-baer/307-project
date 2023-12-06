@@ -1,27 +1,31 @@
 import React, { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
+import Cookie from "js-cookie";
 
 export default function Home() {
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
   const [isImageAccepted, setImageAccepted] = useState(null); // null = not decided, true = accepted, false = rejected
+  const [generating, setGenerating] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
+      setGenerating(true);
+      await axios.post(
         "http://localhost:5000/generate_image",
         { prompt: text },
-      );
+      ).then(response => {
+          if (response.data.output) {
+            setUrl(response.data.output);
+            setImageAccepted(null); // Reset the decision state when a new image is fetched
+          } else if (response.data.error) {
+            console.error(response.data.error);
+          }
+      }).then(() => setGenerating(false));
 
-      if (response.data.output) {
-        setUrl(response.data.output);
-        setImageAccepted(null); // Reset the decision state when a new image is fetched
-      } else if (response.data.error) {
-        console.error(response.data.error);
-      }
     } catch (error) {
       console.error("Error:", error);
     }
@@ -29,7 +33,16 @@ export default function Home() {
 
   const handleAccept = () => {
     setImageAccepted(true);
-    // You can add any additional logic here for when the image is accepted
+    axios.post("http://localhost:5000/store_image",
+        {
+            "prompt": text,
+            "url": url
+        },
+        {
+            headers: {
+                "Authorization": `Bearer ${Cookie.get("token")}`
+            }
+        });
   };
 
   const handleReject = () => {
@@ -52,9 +65,10 @@ export default function Home() {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+          disabled={generating}
         >
-          Submit
+          {generating ? "Loading..." : "Submit"}
         </button>
       </form>
 

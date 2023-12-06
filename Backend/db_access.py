@@ -91,25 +91,22 @@ def check_user(data):
 
 def create_image(data):
     try:
-        # Retrieve the user by username
-        creator = User.objects.get(username=data["creator"])
-        
         # Create and save the image
         image = Image(
-            creator=creator,
+            creator=data["creator"],
             prompt=data["prompt"],
             url=data["url"]
         )
         image.save()
         
         # Optionally, you can also append this image to the user's portfolio here
-        creator.update(push__portfolio=image)
+        #creator.update(push__portfolio=image)
 
         return Response("Image created successfully!", 201)
     except DoesNotExist:
         return Response("Creator user does not exist.", 404)
     except Exception as e:
-        return Response(f"Internal server error {e}", 500)
+        return Response(f"Internal server error: {e}", 500)
 
 
 def get_image(image_id):

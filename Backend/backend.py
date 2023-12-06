@@ -34,10 +34,7 @@ DB_ACCESS_URL = (  # This is where db_access.py is running.
 
 
 @app.route("/generate_image", methods=["POST"])
-@jwt_required()
 def generate_image():
-    current_user = get_jwt_identity()
-
     data = request.get_json()
     url = "https://imagegolf.io/api/generate"
     url_data = {"inputValue": data["prompt"]}
@@ -85,6 +82,7 @@ def update_image_elo():
 @jwt_required()
 def store_image():
     current_user = get_jwt_identity()  # Gets the identity of the current user
+    print(current_user)
 
     data = request.get_json()
     # Validate required fields
@@ -154,7 +152,7 @@ def login():
             # Generate session key/token
             # This is just a placeholder for an actual session key/token
             # session_key = secrets.token_hex(16)
-            access_token = create_access_token(identity=str(user.username))
+            access_token = create_access_token(identity=str(user.pk))
             # You would store this session key in a session store or database
             # with a reference to the user and a valid time period
 
@@ -177,7 +175,6 @@ def login():
             )
     except DoesNotExist:
         # Username does not exist
-        print("bad user")
         return (
             jsonify({"message": "Login failed, invalid username"}),
             401,
