@@ -12,8 +12,8 @@ export default function Vote() {
   // Fetch random images from backend
   const fetchRandomImages = async () => {
     try {
-      const responseOne = await axios.get("/get_random_image");
-      const responseTwo = await axios.get("/get_random_image");
+      const responseOne = await axios.get("http://localhost:5000/get_random_image");
+      const responseTwo = await axios.get("http://localhost:5000/get_random_image");
       setImageOne(responseOne.data);
       setImageTwo(responseTwo.data);
       // Update ELOs if needed
@@ -32,7 +32,7 @@ export default function Vote() {
 
     // API call to update the ELO rating in the backend
     // You need to create this endpoint in your backend
-    await axios.post("/update_image_elo", {
+    await axios.post("http://localhost:5000/update_image_elo", {
       imageIdOne: imageOne.id,
       newEloOne: result.playerRating,
       imageIdTwo: imageTwo.id,
