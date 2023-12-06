@@ -15,6 +15,8 @@ const Login = () => {
     password: "",
     confirmPassword: "",
   });
+  const [usernameError, setUsernameError] = useState("");
+  const [pwdError, setPwdError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,16 +35,39 @@ const Login = () => {
       console.log("try");
       const response = await axios.post(
         "http://localhost:5000/login",
-        formData
+        formData,
       );
       console.log("response", response);
 
       // Store the token in cookie
-      Cookies.set("token", response.data.access_token, { expires: 7, path: "/" });
+      Cookies.set("token", response.data.access_token, {
+        expires: 7,
+        path: "/",
+      });
+
       router.push("/portfolio");
       return response;
     } catch (error) {
-      console.log(error);
+      console.log(`error=${error},${error.response.data.message}`);
+      let msg = error.response.data.message.toLowerCase();
+      if (msg.includes("missing")) {
+        if (msg.includes("username")) {
+          setUsernameError("Please enter a username.");
+          setPwdError("");
+        }
+        if (msg.includes("password")) {
+          setPwdError("Please enter a password.");
+          if (!msg.includes("username")) {
+            setUsernameError("");
+          }
+        }
+      } else if (msg.includes("username")) {
+        setUsernameError("Username does not exist.");
+        setPwdError("");
+      } else if (msg.includes("password")) {
+        setPwdError("Incorrect password.");
+        setUsernameError("");
+      } else throw new Error("Unknown login error");
       return false;
     }
   };
@@ -63,6 +88,9 @@ const Login = () => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600 "
             />
+            {usernameError && (
+              <p className="text-red-500 text-sm">{usernameError}</p>
+            )}
           </div>
 
           <div className="mb-4">
@@ -76,6 +104,7 @@ const Login = () => {
               onChange={handleChange}
               className="w-full border rounded p-2 text-gray-600 "
             />
+            {pwdError && <p className="text-red-500 text-sm">{pwdError}</p>}
           </div>
 
           <button

@@ -43,6 +43,39 @@ def generate_image():
 
     return r.json()
 
+#gets a random image from the database
+@app.route("/get_random_image", methods=["GET"])
+def get_random_image():
+    try:
+        # Randomly select an image
+        image = Image.objects.aggregate([{'$sample': {'size': 1}}]).next()
+        return jsonify(image), 200
+    except StopIteration:
+        # No images found in the database
+        return jsonify({"error": "No images available"}), 404
+    except Exception as e:
+        # Handle other exceptions
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/update_image_elo", methods=["POST"])
+def update_image_elo():
+    data = request.get_json()
+    try:
+        # Update Image One
+        image_one = Image.objects.get(id=data["imageIdOne"])
+        image_one.votes = data["newEloOne"]
+        image_one.save()
+
+        # Update Image Two
+        image_two = Image.objects.get(id=data["imageIdTwo"])
+        image_two.votes = data["newEloTwo"]
+        image_two.save()
+
+        return jsonify({"message": "ELO ratings updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 
 @app.route("/store_image", methods=["POST"])
 def store_image():
@@ -114,28 +147,37 @@ def login():
             )
         else:
             # Incorrect password
+            print("bad pwd")
             return (
-                jsonify(
-                    {"message": "Login failed, incorrect username or password"}
-                ),
+                jsonify({"message": "Login failed, incorrect password"}),
                 401,
             )
     except DoesNotExist:
         # Username does not exist
+        print("bad user")
         return (
-            jsonify(
-                {"message": "Login failed, incorrect username or password"}
-            ),
+            jsonify({"message": "Login failed, invalid username"}),
             401,
         )
     except KeyError:
         # Username or password not provided
-        return (
-            jsonify(
-                {"message": "Login failed, must provide username and password"}
-            ),
-            400,
-        )
+        if not data["username"] and data["password"]:
+            return (
+                jsonify(
+                    {"message": "Login failed, missing username and password"}
+                ),
+                400,
+            )
+        elif not data["username"]:
+            return (
+                jsonify({"message": "Login failed, missing username"}),
+                400,
+            )
+        else:
+            return (
+                jsonify({"message": "Login failed, missing password"}),
+                400,
+            )
     except Exception as e:
         # Catch any other errors
         print(f"Error during login: {str(e)}")

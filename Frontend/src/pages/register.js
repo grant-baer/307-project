@@ -94,7 +94,7 @@ const Register = () => {
       console.log("try");
       const response = await axios.post(
         "http://localhost:5000/register",
-        formData
+        formData,
       );
       router.push("/login");
       return response;
