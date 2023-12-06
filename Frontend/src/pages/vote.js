@@ -50,14 +50,6 @@ export default function Vote() {
 
   return (
     <div className="p-6">
-      <nav className="mb-8 flex justify-between items-center bg-gray-800 p-4 text-white rounded-lg">
-        <Link href="/portfolio">Portfolio</Link>
-        <Link href="/vote">Vote</Link>
-        <Link href="/leaderboard">Leaderboard</Link>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
-          Sign Out
-        </button>
-      </nav>
       <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">Voting</h1>
       <div className="flex justify-center gap-10 mb-4">
         <div className="text-center">
