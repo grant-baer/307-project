@@ -47,7 +47,7 @@ jobs:
           path: |
             Backend/release.zip
             Backend/!venv/
-  build:
+  test:
     runs-on: ubuntu-latest
     defaults:
       run:
