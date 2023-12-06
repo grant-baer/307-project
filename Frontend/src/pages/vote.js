@@ -4,7 +4,6 @@ import Image from 'next/image';
 
 import styles from './vote.module.css';
 
-// Inline styling
 
 export default function Vote() {
   const [images, setImages] = useState([{ src: '/image1.png', id: 1 }, { src: '/image1.png', id: 2 }]);
