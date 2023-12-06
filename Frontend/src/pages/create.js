@@ -3,17 +3,19 @@ import axios from "axios";
 import Image from "next/image";
 import Cookie from "js-cookie";
 
-export default function Home() {
+export default function Create() {
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
   const [isImageAccepted, setImageAccepted] = useState(null); // null = not decided, true = accepted, false = rejected
   const [generating, setGenerating] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setGenerating(true);
+      setFailed(false);
       await axios.post(
         "http://localhost:5000/generate_image",
         { prompt: text },
@@ -22,6 +24,7 @@ export default function Home() {
             setUrl(response.data.output);
             setImageAccepted(null); // Reset the decision state when a new image is fetched
           } else if (response.data.error) {
+            setFailed(true);
             console.error(response.data.error);
           }
       }).then(() => setGenerating(false));
@@ -103,6 +106,9 @@ export default function Home() {
       )}
       {isImageAccepted === false && (
         <p className="mt-8 text-red-500">Image rejected.</p>
+      )}
+      {failed === true && (
+        <p className="mt-8 text-red-500">Image generation failed.</p>
       )}
     </div>
   );
