@@ -2,34 +2,9 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
+import styles from './vote.module.css';
+
 // Inline styling
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: '20px',
-    position: 'relative',
-  },
-  imageWrapper: {
-    position: 'relative',
-    width: '300px', // Adjust based on how large you want the images to display
-    height: '300px', // Adjust based on how large you want the images to display
-    cursor: 'pointer',
-    transition: 'transform 1s, opacity 1s',
-  },
-  default: {
-    opacity: 1, // Ensure the default opacity is 1
-    transform: 'scale(1)',
-  },
-  winning: {
-    transform: 'scale(1.2)',
-    zIndex: 1,
-  },
-  losing: {
-    opacity: 0.5,
-  },
-};
 
 export default function Vote() {
   const [images, setImages] = useState([{ src: '/image1.png', id: 1 }, { src: '/image1.png', id: 2 }]);
@@ -44,26 +19,30 @@ export default function Vote() {
   };
 
   return (
-    <div style={styles.container}>
+    <div className={styles.container}>
       {images.map((image) => (
         <div
           key={image.id}
-          style={{
-            ...styles.imageWrapper,
-            ...(selectedImage === null ? styles.default : selectedImage === image.id ? styles.winning : styles.losing),
-          }}
+          className={`${styles.imageWrapper} ${
+            selectedImage === null
+              ? styles.default
+              : selectedImage === image.id
+              ? styles.winning
+              : styles.losing
+          }`}
           onClick={() => handleImageClick(image.id)}
         >
           <Image
             src={image.src}
             alt='Votable Image'
-            width={1024} // Original width of the image
-            height={1024} // Original height of the image
-            style={{ width: '100%', height: '100%' }} // Adjust the display size within the wrapper
+            width={1024}
+            height={1024}
+            style={{ width: '100%', height: '100%' }}
           />
         </div>
       ))}
     </div>
+
   );
 }
 
