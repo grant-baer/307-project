@@ -1,4 +1,4 @@
-![badge](https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/main_picture-perfect.yml/badge.svg)
+![badge](https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/backend-ci.yml/badge.svg)
 
 # Picture Perfect Project
 
