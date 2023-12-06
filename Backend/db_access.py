@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, request
 from mongoengine import (
     connect,
@@ -7,8 +8,6 @@ from mongoengine import (
     ReferenceField,
     NotUniqueError,
 )
-import json
-
 from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
@@ -16,8 +15,6 @@ from mongoengine.errors import DoesNotExist
 from dotenv import load_dotenv
 
 load_dotenv()
-
-import os
 
 app = Flask(__name__)
 

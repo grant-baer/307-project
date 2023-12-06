@@ -43,12 +43,13 @@ def generate_image():
 
     return r.json()
 
-#gets a random image from the database
+
+# gets a random image from the database
 @app.route("/get_random_image", methods=["GET"])
 def get_random_image():
     try:
         # Randomly select an image
-        image = Image.objects.aggregate([{'$sample': {'size': 1}}]).next()
+        image = Image.objects.aggregate([{"$sample": {"size": 1}}]).next()
         return jsonify(image), 200
     except StopIteration:
         # No images found in the database
@@ -56,6 +57,7 @@ def get_random_image():
     except Exception as e:
         # Handle other exceptions
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/update_image_elo", methods=["POST"])
 def update_image_elo():
@@ -74,7 +76,6 @@ def update_image_elo():
         return jsonify({"message": "ELO ratings updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 @app.route("/store_image", methods=["POST"])
