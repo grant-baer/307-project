@@ -4,6 +4,7 @@ from mongoengine import (
     connect,
     Document,
     StringField,
+    BinaryField,
     IntField,
     ListField,
     ReferenceField,
@@ -47,8 +48,8 @@ class User(Document):
 
 class Image(Document):
     creator = ReferenceField(User, required=True)
-    url = StringField(required=True)
     prompt = StringField(required=True)
+    data = BinaryField(required=True)
 
     meta = {"collection": "images"}
 
@@ -60,7 +61,6 @@ def create_user(data):
         encrypted_password=data["password"],
         email=data["email"],
         portfolio=[]  # Initialize an empty portfolio
-
     )
     try:
         user.save()
@@ -91,16 +91,15 @@ def check_user(data):
 
 def create_image(data):
     try:
-        # Retrieve the user by username
-        creator = User.objects.get(username=data["creator"])
-        
         # Create and save the image
         image = Image(
-            creator=creator,
+            creator=data["creator"],
             prompt=data["prompt"],
-            url=data["url"]
+            data=data["data"]
         )
         image.save()
+
+        creator = User.objects.get(pk=data["creator"])
         
         # Optionally, you can also append this image to the user's portfolio here
         creator.update(push__portfolio=image)
@@ -109,7 +108,7 @@ def create_image(data):
     except DoesNotExist:
         return Response("Creator user does not exist.", 404)
     except Exception as e:
-        return Response(f"Internal server error {e}", 500)
+        return Response(f"Internal server error: {e}", 500)
 
 
 def get_image(image_id):

@@ -20,12 +20,6 @@ const NavBar = () => {
             {/* Primary Navbar items */}
             <div className="hidden md:flex items-center space-x-1">
               <Link
-                href="/"
-                className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
-              >
-                Home
-              </Link>
-              <Link
                 href="/vote"
                 className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
               >
@@ -41,7 +35,13 @@ const NavBar = () => {
                 href="/leaderboard"
                 className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
               >
-                leaderboard
+                Leaderboard
+              </Link>
+              <Link
+                href="/create"
+                className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300"
+              >
+                Create
               </Link>
             </div>
           </div>
@@ -68,16 +68,10 @@ const NavBar = () => {
       <div className="hidden mobile-menu">
         <ul className="">
           <li>
-            <Link
-              href="/"
-              className="block text-sm px-2 py-4 text-white bg-blue-500 font-semibold"
-            >
-              Home
-            </Link>
           </li>
           <li>
             <Link
-              href="/Vote"
+              href="/vote"
               className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
             >
               Vote
@@ -85,7 +79,7 @@ const NavBar = () => {
           </li>
           <li>
             <Link
-              href="/Portfolio"
+              href="/portfolio"
               className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
             >
               Portfolio
@@ -96,7 +90,13 @@ const NavBar = () => {
               href="/leaderboard"
               className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
             >
-              leaderboard
+              Leaderboard
+            </Link>
+            <Link
+              href="/create"
+              className="block text-sm px-2 py-4 hover:bg-blue-500 transition duration-300"
+            >
+              Create
             </Link>
           </li>
         </ul>
