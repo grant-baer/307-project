@@ -16,8 +16,9 @@ export default function Leaderboard() {
 
   return (
     <div className="p-6">
-
-      <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">Leaderboard</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">
+        Leaderboard
+      </h1>
       <table className="w-full text-left border-collapse border border-gray-400">
         <thead className="bg-gray-800 text-white">
           <tr>
@@ -28,7 +29,10 @@ export default function Leaderboard() {
         </thead>
         <tbody>
           {data.map((item, index) => (
-            <tr key={item.id} className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}>
+            <tr
+              key={item.id}
+              className={`${index % 2 === 0 ? "bg-gray-100" : "bg-white"}`}
+            >
               <td className="border border-gray-300 p-2">{item.username}</td>
               <td className="border border-gray-300 p-2">{index + 1}</td>
               <td className="border border-gray-300 p-2">{item.elo}</td>

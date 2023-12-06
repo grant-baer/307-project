@@ -1,5 +1,5 @@
 import "./globals.css"; // Update the path if necessary
-import RootLayout from './layout'; // Update with the correct path to RootLayout
+import RootLayout from "./layout"; // Update with the correct path to RootLayout
 
 function MyApp({ Component, pageProps }) {
   return (

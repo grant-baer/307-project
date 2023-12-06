@@ -1,6 +1,6 @@
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
-import NavBar from './nav'; // Update the path if necessary
+import NavBar from "./nav"; // Update the path if necessary
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,7 +10,10 @@ export default function RootLayout({ children }) {
   return (
     <>
       <div className={inter.className}>
-      {router.pathname !== '/' && router.pathname !== '/login' && router.pathname !== '/register' && <NavBar />}        {children}
+        {router.pathname !== "/" &&
+          router.pathname !== "/login" &&
+          router.pathname !== "/register" && <NavBar />}{" "}
+        {children}
       </div>
     </>
   );

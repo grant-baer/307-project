@@ -35,13 +35,15 @@ const Login = () => {
       console.log("try");
       const response = await axios.post(
         "http://localhost:5000/login",
-        formData
+        formData,
       );
       console.log("response", response);
 
-
       // Store the token in cookie
-      Cookies.set("token", response.data.access_token, { expires: 7, path: "/" });
+      Cookies.set("token", response.data.access_token, {
+        expires: 7,
+        path: "/",
+      });
 
       router.push("/portfolio");
       return response;

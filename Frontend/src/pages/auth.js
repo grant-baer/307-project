@@ -1,10 +1,10 @@
 // auth.js (utility file)
 
 // Import the required libraries
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 // Secret key used to sign the JWT tokens (should match the key used in your backend)
-const JWT_SECRET = 'CHANGE_TO_SECURE_KEY';
+const JWT_SECRET = "CHANGE_TO_SECURE_KEY";
 
 // Function to check if the user is authenticated based on the JWT token
 export function isAuthenticated(token) {
