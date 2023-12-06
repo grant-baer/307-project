@@ -5,6 +5,7 @@ from mongoengine import (
     Document,
     StringField,
     IntField,
+    ListField,
     ReferenceField,
     NotUniqueError,
 )
@@ -12,7 +13,9 @@ from werkzeug.security import check_password_hash
 import secrets
 from mongoengine.errors import DoesNotExist
 
+
 from dotenv import load_dotenv
+
 
 load_dotenv()
 
@@ -37,6 +40,7 @@ class User(Document):
     email = StringField(required=True)
     encrypted_password = StringField(required=True)
     ranking = IntField()
+    portfolio = ListField(ReferenceField('Image'))  # List of image references
 
     meta = {"collection": "users"}
 
@@ -45,7 +49,6 @@ class Image(Document):
     creator = ReferenceField(User, required=True)
     url = StringField(required=True)
     prompt = StringField(required=True)
-    votes = IntField(default=0)
 
     meta = {"collection": "images"}
 
@@ -56,6 +59,8 @@ def create_user(data):
         username=data["username"],
         encrypted_password=data["password"],
         email=data["email"],
+        portfolio=[]  # Initialize an empty portfolio
+
     )
     try:
         user.save()
@@ -82,3 +87,58 @@ def check_user(data):
             "User credentials are unique.",
             200,
         )
+
+
+def create_image(data):
+    try:
+        # Retrieve the user by username
+        creator = User.objects.get(username=data["creator"])
+        
+        # Create and save the image
+        image = Image(
+            creator=creator,
+            prompt=data["prompt"],
+            url=data["url"]
+        )
+        image.save()
+        
+        # Optionally, you can also append this image to the user's portfolio here
+        creator.update(push__portfolio=image)
+
+        return Response("Image created successfully!", 201)
+    except DoesNotExist:
+        return Response("Creator user does not exist.", 404)
+    except Exception as e:
+        return Response(f"Internal server error {e}", 500)
+
+
+def get_image(image_id):
+    try:
+        image = Image.objects.get(id=image_id)
+        return jsonify({
+            "creator": str(image.creator.id),
+            "prompt": image.prompt,
+            "url": image.url,
+        }), 200
+    except DoesNotExist:
+        return Response("Image not found.", 404)
+    except Exception as e:
+        return Response(f"Internal server error {e}", 500)
+
+
+def get_portfolio(username):
+    try:
+        user = User.objects.get(username=username)
+        images = Image.objects(creator=user)
+
+        return jsonify([
+            {
+                "image_id": str(image.id),
+                "prompt": image.prompt,
+                "url": image.url,
+            } for image in images
+        ]), 200
+    except DoesNotExist:
+        return Response("User not found.", 404)
+    except Exception as e:
+        return Response(f"Internal server error {e}", 500)
