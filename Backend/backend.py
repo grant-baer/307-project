@@ -113,11 +113,9 @@ def store_image():
 @app.route("/fetch_portfolio", methods=["GET"])
 @jwt_required()
 def fetch_portfolio():
-    current_user_username = get_jwt_identity()  # Get the username from the JWT token
-
     try:
         # Retrieve the user by username
-        user = User.objects.get(username=current_user_username)
+        user = get_jwt_identity()
 
         # Fetch all images created by this user
         user_images = Image.objects(creator=user)

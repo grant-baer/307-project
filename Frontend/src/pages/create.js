@@ -34,9 +34,11 @@ export default function Create() {
     }
   };
 
-  const handleAccept = () => {
+  const handleAccept = async (e) => {
+    e.preventDefault();
+
     setImageAccepted(true);
-    axios.post("http://localhost:5000/store_image",
+    await axios.post("http://localhost:5000/store_image",
         {
             "prompt": text,
             "url": url
@@ -45,8 +47,7 @@ export default function Create() {
             headers: {
                 "Authorization": `Bearer ${Cookie.get("token")}`
             }
-        });
-  };
+        }).catch((error) => console.error("Error: ", error))};
 
   const handleReject = () => {
     setImageAccepted(false);
@@ -71,7 +72,7 @@ export default function Create() {
           className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
           disabled={generating}
         >
-          {generating ? "Loading..." : "Submit"}
+          {generating ? "Generating..." : "Submit"}
         </button>
       </form>
 
