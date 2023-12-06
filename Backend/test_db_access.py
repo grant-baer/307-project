@@ -1,6 +1,5 @@
 import unittest
 from unittest.mock import MagicMock, patch
-import coverage
 from db_access import *
 
 
