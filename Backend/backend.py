@@ -10,7 +10,7 @@ from flask_jwt_extended import (
 import requests
 from flask_cors import CORS, cross_origin
 
-from mongoengine import connect, Document, StringField, DoesNotExist
+from mongoengine import connect, Document, StringField, BinaryField, DoesNotExist
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets  # For generating a session key
 
@@ -19,6 +19,8 @@ from datetime import datetime
 from db_access import User
 from db_access import Image
 from db_access import check_user, create_user, db_connect, get_image, create_image
+
+import base64
 
 
 app = Flask(__name__)
@@ -91,11 +93,13 @@ def store_image():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
+    image_res = requests.get(data["url"])
+
     # Prepare the data for creating an image
     image_data = {
         "creator": current_user,  # Assuming the creator is the logged-in user
         "prompt": data["prompt"],
-        "url": data["url"]
+        "data": image_res.content
     }
 
     # Call the create_image function from db_access
@@ -118,15 +122,15 @@ def fetch_portfolio():
         user = get_jwt_identity()
 
         # Fetch all images created by this user
-        user_images = Image.objects(creator=user)
+        portfolio_images = User.objects.get(pk=user).portfolio
 
         # Format the response with the list of images
         portfolio = [{
             "image_id": str(image.id),
             "prompt": image.prompt,
-            "url": image.url,
-            "creator": user
-        } for image in user_images]
+            "creator": user,
+            "data": base64.b64encode(image.data).decode("ascii")
+        } for image in portfolio_images]
 
         return jsonify(portfolio), 200
 

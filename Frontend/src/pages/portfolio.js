@@ -16,7 +16,6 @@ export default function Portfolio() {
             "Authorization": `Bearer ${Cookie.get("token")}`
           }
         }).then(response => {
-          console.log(response.data);
           setPortfolio(response.data);
         }).catch((error) => console.error("Error: ", error));
     }
@@ -28,11 +27,10 @@ export default function Portfolio() {
       <h1 className="text-2xl mb-4">Portfolio</h1>
       <div className="grid grid-cols-3 gap-4">
         {portfolio && portfolio.map((image) =>
-            <Image
-                loader={() => image.url}
-                src={image.url}
-                width={500}
-                height={500}
+            <Image src={"data:image/png;base64, " + image.data}
+               loader={() => image.url}
+               height={500}
+               width={500}
             />)}
       </div>
     </div>
