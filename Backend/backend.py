@@ -18,7 +18,7 @@ from datetime import datetime
 
 from db_access import User
 from db_access import Image
-from db_access import check_user, create_user, db_connect, get_image, create_image
+from db_access import check_user, create_user, db_connect, create_image
 
 import base64
 
@@ -36,7 +36,9 @@ DB_ACCESS_URL = (  # This is where db_access.py is running.
 
 
 @app.route("/generate_image", methods=["POST"])
+@jwt_required()
 def generate_image():
+    current_user = get_jwt_identity()  # Gets the identity of the current user
     data = request.get_json()
     url = "https://imagegolf.io/api/generate"
     url_data = {"inputValue": data["prompt"]}
@@ -67,12 +69,12 @@ def update_image_elo():
     try:
         # Update Image One
         image_one = Image.objects.get(id=data["imageIdOne"])
-        image_one.votes = data["newEloOne"]
+        image_one.elo = data["newEloOne"]
         image_one.save()
 
         # Update Image Two
         image_two = Image.objects.get(id=data["imageIdTwo"])
-        image_two.votes = data["newEloTwo"]
+        image_two.elo = data["newEloTwo"]
         image_two.save()
 
         return jsonify({"message": "ELO ratings updated successfully"}), 200
@@ -84,7 +86,7 @@ def update_image_elo():
 @jwt_required()
 def store_image():
     current_user = get_jwt_identity()  # Gets the identity of the current user
-    print(current_user)
+    # print(current_user)
 
     data = request.get_json()
     # Validate required fields

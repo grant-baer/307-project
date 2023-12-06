@@ -31,9 +31,10 @@ def db_connect(DB_URL=None):
 
 
 class Response:
-    def __init__(self, message, status_code) -> None:
+    def __init__(self, message, status_code, data) -> None:
         self.status_code = status_code
         self.message = message
+        self.data = data
 
 
 class User(Document):
@@ -50,6 +51,7 @@ class Image(Document):
     creator = ReferenceField(User, required=True)
     prompt = StringField(required=True)
     data = BinaryField(required=True)
+    elo = IntField(required=True)
 
     meta = {"collection": "images"}
 
@@ -64,9 +66,20 @@ def create_user(data):
     )
     try:
         user.save()
-        return Response("User created successfully!", 201)
+        return Response("User created successfully!", 201,{})
     except Exception as e:
-        return Response(f"Internal server error {e}", 500)
+        return Response(f"Internal server error {e}", 500,{})
+
+
+def get_user(data):
+    # only called in backend, assumes user exists
+    user = User.objects.get(username=data["username"])
+    return Response(
+            "User found.",
+            200,
+            user
+        )
+    
 
 
 def check_user(data):
@@ -75,17 +88,20 @@ def check_user(data):
         return Response(
             "Username already exists. Choose another.",
             401,
+            {}
         )
     user = User.objects(email=data["email"]).first()
     if user:
         return Response(
             "Email already exists. Choose another.",
             401,
+            {}
         )
     if user is None:
         return Response(
             "User credentials are unique.",
             200,
+            {}
         )
 
 
@@ -104,40 +120,30 @@ def create_image(data):
         # Optionally, you can also append this image to the user's portfolio here
         creator.update(push__portfolio=image)
 
-        return Response("Image created successfully!", 201)
+        return Response("Image created successfully!", 201,{})
     except DoesNotExist:
-        return Response("Creator user does not exist.", 404)
+        return Response("Creator user does not exist.", 404,{})
     except Exception as e:
-        return Response(f"Internal server error: {e}", 500)
+        return Response(f"Internal server error: {e}", 500,{})
 
 
-def get_image(image_id):
-    try:
-        image = Image.objects.get(id=image_id)
-        return jsonify({
-            "creator": str(image.creator.id),
-            "prompt": image.prompt,
-            "url": image.url,
-        }), 200
-    except DoesNotExist:
-        return Response("Image not found.", 404)
-    except Exception as e:
-        return Response(f"Internal server error {e}", 500)
+# FUNCTION EXISTS IN db_access
+# def get_portfolio(username):
+#     try:
+#         user = User.objects.get(username=username)
+#         portfolio_images = User.objects.get(pk=user).portfolio
+#         images = Image.objects(creator=user)
 
 
-def get_portfolio(username):
-    try:
-        user = User.objects.get(username=username)
-        images = Image.objects(creator=user)
-
-        return jsonify([
-            {
-                "image_id": str(image.id),
-                "prompt": image.prompt,
-                "url": image.url,
-            } for image in images
-        ]), 200
-    except DoesNotExist:
-        return Response("User not found.", 404)
-    except Exception as e:
-        return Response(f"Internal server error {e}", 500)
+#         return jsonify(
+#             portfolio_images
+#             # {
+#             #     "image_id": str(image.id),
+#             #     "prompt": image.prompt,
+#             #     "url": image.url,
+#             # } for image in images
+#         ), 200
+#     except DoesNotExist:
+#         return Response("User not found.", 404,{})
+#     except Exception as e:
+#         return Response(f"Internal server error {e}", 500,{})
