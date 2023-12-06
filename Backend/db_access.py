@@ -21,9 +21,12 @@ import os
 
 app = Flask(__name__)
 
-# MongoDB connection
-mongo_uri = os.environ.get("MONGO_URI")
-connect(host=mongo_uri)
+
+def db_connect(DB_URL=None):
+    # MongoDB connection
+    mongo_uri = DB_URL or os.environ.get("MONGO_URI")
+    connect(host=mongo_uri)
+    return True
 
 
 class Response:
@@ -59,23 +62,19 @@ def create_user(data):
     )
     try:
         user.save()
-        print(f"successfully added user {user.username}")
         return Response("User created successfully!", 201)
     except Exception as e:
         return Response(f"Internal server error {e}", 500)
 
 
-def get_user(data):
-    # data = json.loads(data.decode("utf-8"))
+def check_user(data):
     user = User.objects(username=data["username"]).first()
-    print(f"user={user}")
     if user:
         return Response(
             "Username already exists. Choose another.",
             401,
         )
     user = User.objects(email=data["email"]).first()
-    print(f"user={user}")
     if user:
         return Response(
             "Email already exists. Choose another.",

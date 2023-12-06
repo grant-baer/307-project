@@ -18,7 +18,7 @@ from datetime import datetime
 
 from db_access import User
 from db_access import Image
-from db_access import get_user, create_user
+from db_access import check_user, create_user, db_connect
 
 
 app = Flask(__name__)
@@ -218,7 +218,7 @@ def register():
         "email": email,
         "password": hashed_password,
     }
-    response = get_user(user_data)
+    response = check_user(user_data)
     if response.status_code == 401:
         print(f"responsey={response.message}")
         return (
@@ -237,6 +237,7 @@ def register():
 
 
 if __name__ == "__main__":
+    db_connect()
     try:
         app.run(port=5000, debug=True)
     except OSError as e:
