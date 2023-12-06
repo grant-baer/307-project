@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import eloRating from "elo-rating";
 import axios from "axios"; // Import axios for API requests
@@ -12,8 +12,8 @@ export default function Vote() {
   // Fetch random images from backend
   const fetchRandomImages = async () => {
     try {
-      const responseOne = await axios.get('/get_random_image');
-      const responseTwo = await axios.get('/get_random_image');
+      const responseOne = await axios.get("/get_random_image");
+      const responseTwo = await axios.get("/get_random_image");
       setImageOne(responseOne.data);
       setImageTwo(responseTwo.data);
       // Update ELOs if needed
@@ -32,16 +32,13 @@ export default function Vote() {
 
     // API call to update the ELO rating in the backend
     // You need to create this endpoint in your backend
-    await axios.post('/update_image_elo', {
+    await axios.post("/update_image_elo", {
       imageIdOne: imageOne.id,
       newEloOne: result.playerRating,
       imageIdTwo: imageTwo.id,
       newEloTwo: result.opponentRating,
     });
   };
-
-  
-
 
   // Load new images on each page load
   useEffect(() => {
@@ -50,22 +47,26 @@ export default function Vote() {
 
   return (
     <div className="p-6">
-      <nav className="mb-8 flex justify-between items-center bg-gray-800 p-4 text-white rounded-lg">
-        <Link href="/portfolio">Portfolio</Link>
-        <Link href="/vote">Vote</Link>
-        <Link href="/leaderboard">Leaderboard</Link>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">
-          Sign Out
-        </button>
-      </nav>
-      <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">Voting</h1>
+      <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">
+        Voting
+      </h1>
       <div className="flex justify-center gap-10 mb-4">
         <div className="text-center">
-          <img src={imageOne.url} alt="Image One" className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer" onClick={() => vote(1)} />
+          <Image
+            src={imageOne.url}
+            alt="Image One"
+            className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer"
+            onClick={() => vote(1)}
+          />
           <p className="mt-2 text-lg font-semibold">ELO: {eloOne}</p>
         </div>
         <div className="text-center">
-          <img src={imageTwo.url} alt="Image Two" className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer" onClick={() => vote(2)} />
+          <Image
+            src={imageTwo.url}
+            alt="Image Two"
+            className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer"
+            onClick={() => vote(2)}
+          />
           <p className="mt-2 text-lg font-semibold">ELO: {eloTwo}</p>
         </div>
       </div>

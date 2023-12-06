@@ -13,14 +13,14 @@ export default function Home() {
     try {
       const response = await axios.post(
         "http://localhost:5000/generate_image",
-        {"prompt": text}
+        { prompt: text },
       );
 
       if (response.data.output) {
         setUrl(response.data.output);
         setImageAccepted(null); // Reset the decision state when a new image is fetched
       } else if (response.data.error) {
-          console.error(response.data.error);
+        console.error(response.data.error);
       }
     } catch (error) {
       console.error("Error:", error);

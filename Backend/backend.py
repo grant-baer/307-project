@@ -18,8 +18,7 @@ from datetime import datetime
 
 from db_access import User
 from db_access import Image
-from db_access import get_user, create_user
-from db_access import get_image, create_image
+from db_access import check_user, create_user, db_connect, get_image, create_image
 
 
 app = Flask(__name__)
@@ -47,12 +46,13 @@ def generate_image():
 
     return r.json()
 
-#gets a random image from the database
+
+# gets a random image from the database
 @app.route("/get_random_image", methods=["GET"])
 def get_random_image():
     try:
         # Randomly select an image
-        image = Image.objects.aggregate([{'$sample': {'size': 1}}]).next()
+        image = Image.objects.aggregate([{"$sample": {"size": 1}}]).next()
         return jsonify(image), 200
     except StopIteration:
         # No images found in the database
@@ -60,6 +60,7 @@ def get_random_image():
     except Exception as e:
         # Handle other exceptions
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/update_image_elo", methods=["POST"])
 def update_image_elo():
@@ -78,7 +79,6 @@ def update_image_elo():
         return jsonify({"message": "ELO ratings updated successfully"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 
 @app.route("/store_image", methods=["POST"])
@@ -244,7 +244,7 @@ def register():
         "password": hashed_password,
         "portfolio": portfolio,
     }
-    response = get_user(user_data)
+    response = check_user(user_data)
     if response.status_code == 401:
         print(f"responsey={response.message}")
         return (
@@ -263,6 +263,7 @@ def register():
 
 
 if __name__ == "__main__":
+    db_connect()
     try:
         app.run(port=5000, debug=True)
     except OSError as e:

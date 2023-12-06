@@ -6,3 +6,5 @@ werkzeug
 requests
 flask_jwt_extended
 python-dotenv
+mongomock
+coverage
