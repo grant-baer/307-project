@@ -76,7 +76,7 @@ export default function Vote() {
     setTimeout(() => {
       fetchTwoDistinctImages();
       setSelectedImage(null);
-    }, 2000); // 2 seconds delay for the next vote
+    }, 800); // 2 seconds delay for the next vote
   };
 
   const updateElo = async (winnerId, newEloWinner, loserId, newEloLoser) => {
