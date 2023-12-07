@@ -1,6 +1,35 @@
-![badge](https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/backend-ci.yml/badge.svg)
+# Picture Perfect
 
-# Picture Perfect Project
+## About the Project
+
+### Description
+
+Picture Perfect is an AI-powered game designed to challenge your creativity! Input any text-based prompt you can imagine and get back a realistic image. The better the prompt, the better the image! Once you have prompt engineered to your heart's content, check out the voting page where images compete for your vote, king of the hill style. Check out the leaderboard to see how you fare in comparison to other PicPerfers!
+
+### Tech Stack
+
+### Backend
+
+- ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+- ![Flask](https://img.shields.io/badge/flask-%23000.svg?style=for-the-badge&logo=flask&logoColor=white)
+- ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+
+### Frontend
+
+- ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
+- ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+- ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white)
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+
+[Python]: https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white
+[HTML-URL]: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
+[CSS-URL]: https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white
+
+## UI Prototype
+
+## Code Coverage
 
 ## Code Style Guide
 
@@ -27,87 +56,3 @@ Replace `your_script.py` with the path to the file you want to check. Address an
 ### Frontend (Next.js)
 
 For the frontend, we use [Next.js](https://nextjs.org/) framework and enforce code styles and conventions using ESLint and Prettier. Ensure you have the latest versions of both installed.
-
-#### ESLint
-
-ESLint is a static code analysis tool for identifying problematic patterns in JavaScript code.
-
-To install ESLint, run:
-
-```bash
-npm install eslint --save-dev
-```
-
-You can then set up ESLint by following these commands:
-
-```bash
-npx eslint --init
-```
-
-Select the appropriate options that match our project's setup when prompted.
-
-#### Prettier
-
-Prettier is an opinionated code formatter that supports many languages and integrates with most editors.
-
-To install Prettier, run:
-
-```bash
-npm install --save-dev --save-exact prettier
-```
-
-After installing, you can run Prettier with:
-
-```bash
-npx prettier --write .
-```
-
-This command will format your code according to the project's style guidelines.
-
-### IDE Plugins
-
-For a smoother coding experience, we recommend setting up your IDE with plugins for ESLint and Prettier.
-
-#### Visual Studio Code
-
-- **ESLint Plugin**: Install the ESLint extension by going to the Extensions view (Ctrl+Shift+X) and searching for 'ESLint' and install it.
-
-- **Prettier Plugin**: Similarly, search for 'Prettier - Code formatter' and install the extension.
-
-After installing the plugins, configure your settings to format on save, which can typically be done by adding the following to your settings.json file:
-
-```json
-{
-  "editor.formatOnSave": true,
-  "eslint.autoFixOnSave": true,
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "next",
-    "next/core-web-vitals"
-  ],
-  "prettier.disableLanguages": []
-}
-```
-
-This setup will automatically format your code according to the project's style guide when you save a file.
-
-#### Other IDEs
-
-For other IDEs, please refer to the respective plugin installation and configuration documentation, ensuring they match the versions and configurations we use in this project.
-
----
-
-Remember to commit the style configuration files for ESLint and Prettier (`.eslintrc`, `.prettierrc`, etc.) to your project repository so that all contributors use consistent settings.
-
-**Considerations**
-
-- User Auth
-- Interface - sign in - user portfolio - image generating (on users own portfolio) - voting - leaderboard (best creator/image)
-- API cost - estimate cost for Klingenberg to cover
-- Image storage - use urls for faster loading speed - openAI can host image URLs
-
-**Programs:**
-Python Flask (Backend),
-React via next.js (Frontend)
-MongoDB (DB)
