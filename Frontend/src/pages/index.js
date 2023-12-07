@@ -40,7 +40,7 @@ export async function getServerSideProps(context) {
   const token = req.cookies["token"]; // Replace "your_cookie_name" with your actual cookie name
 
   if (await isAuthenticated(token)) {
-    // If the user is not authenticated, redirect them to the login page
+    // If the user is authenticated, redirect them to the Create page
     return {
       redirect: {
         destination: "/create",
@@ -49,7 +49,7 @@ export async function getServerSideProps(context) {
     };
   }
 
-  // If the user is authenticated, render the Portfolio page
+  // If the user is authenticated, render the Index page
   return {
     props: {}, // Will be passed to the page component as props
   };
