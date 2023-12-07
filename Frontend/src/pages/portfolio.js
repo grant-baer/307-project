@@ -10,14 +10,16 @@ export default function Portfolio() {
 
   useEffect(() => {
     async function fetch_portfolio() {
-      await axios.get("http://localhost:5000/fetch_portfolio",
-        {
+      await axios
+        .get("http://localhost:5000/fetch_portfolio", {
           headers: {
-            "Authorization": `Bearer ${Cookie.get("token")}`
-          }
-        }).then(response => {
+            Authorization: `Bearer ${Cookie.get("token")}`,
+          },
+        })
+        .then((response) => {
           setPortfolio(response.data);
-        }).catch((error) => console.error("Error: ", error));
+        })
+        .catch((error) => console.error("Error: ", error));
     }
     fetch_portfolio();
   }, []);
@@ -26,12 +28,16 @@ export default function Portfolio() {
     <div className="p-6">
       <h1 className="text-2xl mb-4">Portfolio</h1>
       <div className="grid grid-cols-3 gap-4">
-        {portfolio && portfolio.map((image) =>
-            <Image src={"data:image/png;base64, " + image.data}
-               loader={() => image.url}
-               height={500}
-               width={500}
-            />)}
+        {portfolio &&
+          portfolio.map((image) => (
+            <Image
+              src={"data:image/png;base64, " + image.data}
+              loader={() => image.url}
+              height={500}
+              width={500}
+              alt="Portfolio Image"
+            />
+          ))}
       </div>
     </div>
   );

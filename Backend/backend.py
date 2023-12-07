@@ -10,7 +10,13 @@ from flask_jwt_extended import (
 import requests
 from flask_cors import CORS, cross_origin
 
-from mongoengine import connect, Document, StringField, BinaryField, DoesNotExist
+from mongoengine import (
+    connect,
+    Document,
+    StringField,
+    BinaryField,
+    DoesNotExist,
+)
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets  # For generating a session key
 
@@ -18,7 +24,13 @@ from datetime import datetime
 
 from db_access import User
 from db_access import Image
-from db_access import check_user, create_user, db_connect, create_image
+from db_access import (
+    check_user,
+    create_user,
+    db_connect,
+    get_image,
+    create_image,
+)
 
 import base64
 
@@ -101,7 +113,7 @@ def store_image():
     image_data = {
         "creator": current_user,  # Assuming the creator is the logged-in user
         "prompt": data["prompt"],
-        "data": image_res.content
+        "data": image_res.content,
     }
 
     # Call the create_image function from db_access
@@ -127,12 +139,15 @@ def fetch_portfolio():
         portfolio_images = User.objects.get(pk=user).portfolio
 
         # Format the response with the list of images
-        portfolio = [{
-            "image_id": str(image.id),
-            "prompt": image.prompt,
-            "creator": user,
-            "data": base64.b64encode(image.data).decode("ascii")
-        } for image in portfolio_images]
+        portfolio = [
+            {
+                "image_id": str(image.id),
+                "prompt": image.prompt,
+                "creator": user,
+                "data": base64.b64encode(image.data).decode("ascii"),
+            }
+            for image in portfolio_images
+        ]
 
         return jsonify(portfolio), 200
 
@@ -210,7 +225,6 @@ def login():
 
 @app.route("/register", methods=["POST"])
 def register():
-
     data = request.get_json()
 
     # Validate required fields
@@ -231,7 +245,7 @@ def register():
     username = data["username"]
     plain_text_password = data["password"]
     email = data["email"]
-    portfolio = [] #initialized to []
+    portfolio = []  # initialized to []
 
     # Hash the password
     hashed_password = generate_password_hash(

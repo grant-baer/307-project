@@ -1,6 +1,13 @@
 ![badge](https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/backend-ci.yml/badge.svg)
+![badge](https://github.com/grant-baer/Picture-Perfect-Project/actions/workflows/frontend-ci.yml/badge.svg)
 
-# Picture Perfect Project
+# Picture Perfect
+
+## About the Project
+
+## UI Prototype
+
+## Development Environment Setup
 
 ## Code Style Guide
 
