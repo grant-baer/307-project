@@ -147,19 +147,24 @@ def fetch_portfolio():
         # Handle any other exceptions
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/top_elo_images", methods=["GET"])
 def top_elo_images():
     try:
         # Fetch the top 20 images with the highest ELO, or fewer if less than 20 images are available
-        top_images = Image.objects.order_by('-elo').limit(20)
+        top_images = list(Image.objects.order_by('-elo').limit(20))
 
-        # Serialize the results into a JSON-friendly format
-        results = json.loads(json_util.dumps(top_images))
+        # Serialize the MongoDB documents, including ObjectId fields, in the list
+        serialized_images = []
+        for image in top_images:
+            # Convert ObjectId to a string for JSON serialization
+            creator_id = str(image.creator.id)
+            image_data = {"id": str(image.id), "creator": creator_id, "url": image.url, "elo": image.elo}
+            serialized_images.append(image_data)
 
-        return jsonify(results), 200
+        return jsonify(serialized_images), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route("/login", methods=["POST"])
 def login():
