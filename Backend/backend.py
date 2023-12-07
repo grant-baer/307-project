@@ -28,7 +28,7 @@ from db_access import (
     check_user,
     create_user,
     db_connect,
-    get_image,
+    # get_image,
     create_image,
 )
 
