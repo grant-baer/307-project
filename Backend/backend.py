@@ -159,7 +159,15 @@ def top_elo_images():
         for image in top_images:
             # Convert ObjectId to a string for JSON serialization
             creator_id = str(image.creator.id)
-            image_data = {"id": str(image.id), "creator": creator_id, "url": image.url, "elo": image.elo}
+
+            try:
+                # Fetch the user by ObjectId
+                creator = User.objects.get(id=image.creator.id)
+                creator_username = creator.username
+            except DoesNotExist:
+                creator_username = "Unknown User"
+
+            image_data = {"id": str(image.id), "creator": creator_username, "url": image.url, "elo": image.elo}
             serialized_images.append(image_data)
 
         return jsonify(serialized_images), 200
