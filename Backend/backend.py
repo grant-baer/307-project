@@ -10,27 +10,14 @@ from flask_jwt_extended import (
 import requests
 from flask_cors import CORS, cross_origin
 
-from mongoengine import (
-    connect,
-    Document,
-    StringField,
-    BinaryField,
-    DoesNotExist,
-)
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets  # For generating a session key
 
 from datetime import datetime
 
+import db_access
 from db_access import User
 from db_access import Image
-from db_access import (
-    check_user,
-    create_user,
-    db_connect,
-    # get_image,
-    create_image,
-)
 
 import base64
 
@@ -41,11 +28,6 @@ app.config["CORS_HEADERS"] = "Content-Type"
 
 app.config["JWT_SECRET_KEY"] = "CHANGE_TO_SECURE_KEY"
 jwt = JWTManager(app)
-
-DB_ACCESS_URL = (  # This is where db_access.py is running.
-    "http://127.0.0.1:5001"
-)
-
 
 @app.route("/generate_image", methods=["POST"])
 @jwt_required()
@@ -66,6 +48,7 @@ def get_random_image():
     try:
         # Randomly select an image
         image = Image.objects.aggregate([{"$sample": {"size": 1}}]).next()
+        print(image)
         return jsonify(image), 200
     except StopIteration:
         # No images found in the database
@@ -107,17 +90,19 @@ def store_image():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
-    image_res = requests.get(data["url"])
+    image_res = requests.post("https://api.imgur.com/3/image",
+        data={"image": data["url"]},
+        headers={"Authorization": "Client-ID " + os.environ["IMGUR_CLIENT_ID"]})
 
     # Prepare the data for creating an image
     image_data = {
         "creator": current_user,  # Assuming the creator is the logged-in user
         "prompt": data["prompt"],
-        "data": image_res.content,
+        "url": image_res.json()["data"]["link"]
     }
 
     # Call the create_image function from db_access
-    response = create_image(image_data)
+    response = db_access.create_image(image_data)
 
     # Handle the response
     if response.status_code == 201:
@@ -139,15 +124,12 @@ def fetch_portfolio():
         portfolio_images = User.objects.get(pk=user).portfolio
 
         # Format the response with the list of images
-        portfolio = [
-            {
-                "image_id": str(image.id),
-                "prompt": image.prompt,
-                "creator": user,
-                "data": base64.b64encode(image.data).decode("ascii"),
-            }
-            for image in portfolio_images
-        ]
+        portfolio = [{
+            "image_id": str(image.id),
+            "prompt": image.prompt,
+            "creator": user,
+            "url": image.url
+        } for image in portfolio_images]
 
         return jsonify(portfolio), 200
 
@@ -259,7 +241,7 @@ def register():
         "password": hashed_password,
         "portfolio": portfolio,
     }
-    response = check_user(user_data)
+    response = db_acess.check_user(user_data)
     if response.status_code == 401:
         print(f"responsey={response.message}")
         return (
@@ -267,7 +249,7 @@ def register():
             400,
         )
     # Send the user data with the hashed password to the database access layer
-    response = create_user(user_data)
+    response = db_access.create_user(user_data)
     # Handle the response from the database access layer
     if response.status_code == 201:
         print("User created successfully!")
@@ -300,7 +282,7 @@ def verify_user():
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    db_connect()
+    db_access.db_connect()
     try:
         app.run(port=5000, debug=True)
     except OSError as e:

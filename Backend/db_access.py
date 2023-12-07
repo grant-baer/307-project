@@ -50,7 +50,7 @@ class User(Document):
 class Image(Document):
     creator = ReferenceField(User, required=True)
     prompt = StringField(required=True)
-    data = BinaryField(required=True)
+    url = StringField(required=True)
     elo = IntField(required=True)
 
     meta = {"collection": "images"}
@@ -111,7 +111,8 @@ def create_image(data):
         image = Image(
             creator=data["creator"],
             prompt=data["prompt"],
-            data=data["data"]
+            url=data["url"],
+            elo=1000
         )
         image.save()
 
@@ -125,25 +126,3 @@ def create_image(data):
         return Response("Creator user does not exist.", 404,{})
     except Exception as e:
         return Response(f"Internal server error: {e}", 500,{})
-
-
-# FUNCTION EXISTS IN db_access
-# def get_portfolio(username):
-#     try:
-#         user = User.objects.get(username=username)
-#         portfolio_images = User.objects.get(pk=user).portfolio
-#         images = Image.objects(creator=user)
-
-
-#         return jsonify(
-#             portfolio_images
-#             # {
-#             #     "image_id": str(image.id),
-#             #     "prompt": image.prompt,
-#             #     "url": image.url,
-#             # } for image in images
-#         ), 200
-#     except DoesNotExist:
-#         return Response("User not found.", 404,{})
-#     except Exception as e:
-#         return Response(f"Internal server error {e}", 500,{})

@@ -18,6 +18,7 @@ export default function Create() {
     try {
       setGenerating(true);
       setFailed(false);
+      setImageAccepted(null);
       await axios.post(
         "http://localhost:5000/generate_image",
         { prompt: text },
@@ -37,6 +38,8 @@ export default function Create() {
       }).then(() => setGenerating(false));
 
     } catch (error) {
+      setFailed(true);
+      setGenerating(false);
       console.error("Error:", error);
     }
   };
@@ -125,7 +128,7 @@ export default function Create() {
 
 export async function getServerSideProps(context) {
   const { req } = context;
-  const token = req.cookies["token"]; // Replace "your_cookie_name" with your actual cookie name
+  const token = req.cookies["token"];
 
   if (!await isAuthenticated(token)) {
     // If the user is not authenticated, redirect them to the login page
@@ -137,7 +140,7 @@ export async function getServerSideProps(context) {
     };
   }
 
-  // If the user is authenticated, render the Portfolio page
+  // If the user is authenticated, render the Create page
   return {
     props: {}, // Will be passed to the page component as props
   };

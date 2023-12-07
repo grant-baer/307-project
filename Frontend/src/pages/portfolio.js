@@ -25,19 +25,15 @@ export default function Portfolio() {
   }, []);
 
   return (
-    <div className="p-6">
+    <div className="bg-gray-100 min-h-screen p-6">
       <h1 className="text-2xl mb-4">Portfolio</h1>
-      <div className="grid grid-cols-3 gap-4">
-        {portfolio &&
-          portfolio.map((image) => (
-            <Image
-              src={"data:image/png;base64, " + image.data}
-              loader={() => image.url}
-              height={500}
-              width={500}
-              alt="Portfolio Image"
-            />
-          ))}
+      <div className="grid grid-cols-5 gap-4 content-stretch">
+        {portfolio && portfolio.map((image) =>
+            <Image src={image.url}
+               loader={() => image.url}
+               height={1024}
+               width={1024}
+            />)}
       </div>
     </div>
   );
@@ -45,7 +41,7 @@ export default function Portfolio() {
 
 export async function getServerSideProps(context) {
   const { req } = context;
-  const token = req.cookies["token"]; // Replace "your_cookie_name" with your actual cookie name
+  const token = req.cookies["token"];
 
   if (!await isAuthenticated(token)) {
     // If the user is not authenticated, redirect them to the login page
