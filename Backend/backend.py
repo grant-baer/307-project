@@ -9,9 +9,12 @@ from flask_jwt_extended import (
 
 import requests
 from flask_cors import CORS, cross_origin
+from bson import json_util
+from mongoengine.errors import DoesNotExist
 
 from werkzeug.security import generate_password_hash, check_password_hash
 import secrets  # For generating a session key
+import json
 
 from datetime import datetime
 
@@ -42,19 +45,19 @@ def generate_image():
     return r.json()
 
 
-# gets a random image from the database
 @app.route("/get_random_image", methods=["GET"])
 def get_random_image():
     try:
         # Randomly select an image
         image = Image.objects.aggregate([{"$sample": {"size": 1}}]).next()
-        print(image)
-        return jsonify(image), 200
+        if image:
+            # Serialize the MongoDB document including ObjectId fields
+            return json.loads(json_util.dumps(image)), 200
+        else:
+            return jsonify({"error": "No images available"}), 404
     except StopIteration:
-        # No images found in the database
         return jsonify({"error": "No images available"}), 404
     except Exception as e:
-        # Handle other exceptions
         return jsonify({"error": str(e)}), 500
 
 
@@ -63,14 +66,18 @@ def update_image_elo():
     data = request.get_json()
     try:
         # Update Image One
-        image_one = Image.objects.get(id=data["imageIdOne"])
-        image_one.elo = data["newEloOne"]
-        image_one.save()
+        image_one = Image.objects(id=data["imageIdOne"]).first()
+        if not image_one:
+            return jsonify({"error": "Image One not found"}), 404
+
+        image_one.update(set__elo=data["newEloOne"])
 
         # Update Image Two
-        image_two = Image.objects.get(id=data["imageIdTwo"])
-        image_two.elo = data["newEloTwo"]
-        image_two.save()
+        image_two = Image.objects(id=data["imageIdTwo"]).first()
+        if not image_two:
+            return jsonify({"error": "Image Two not found"}), 404
+
+        image_two.update(set__elo=data["newEloTwo"])
 
         return jsonify({"message": "ELO ratings updated successfully"}), 200
     except Exception as e:
