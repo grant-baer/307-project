@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isAuthenticated } from "./auth"; // Make sure to use the correct path
+import { isAuthenticated } from "./auth";
 import Cookie from "js-cookie";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -41,4 +41,24 @@ export default function Portfolio() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { req } = context;
+  const token = req.cookies["token"];
+
+  if (!await isAuthenticated(token)) {
+    // If the user is not authenticated, redirect them to the login page
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  // If the user is authenticated, render the Portfolio page
+  return {
+    props: {}, // Will be passed to the page component as props
+  };
 }

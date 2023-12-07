@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { isAuthenticated } from "./auth";
+
 
 export default function InitialLanding() {
   return (
@@ -31,4 +33,24 @@ export default function InitialLanding() {
       </div>
     </div>
   );
+}
+
+export async function getServerSideProps(context) {
+  const { req } = context;
+  const token = req.cookies["token"]; // Replace "your_cookie_name" with your actual cookie name
+
+  if (await isAuthenticated(token)) {
+    // If the user is authenticated, redirect them to the Create page
+    return {
+      redirect: {
+        destination: "/create",
+        permanent: false,
+      },
+    };
+  }
+
+  // If the user is authenticated, render the Index page
+  return {
+    props: {}, // Will be passed to the page component as props
+  };
 }

@@ -277,6 +277,28 @@ def register():
         return jsonify({"message": "Failed to create user!!"}), 500
 
 
+@app.route("/api/verify_user", methods=["GET"])
+@jwt_required()
+def verify_user():
+    try:
+        # Retrieve the user by username
+        user = get_jwt_identity()
+        temp = User.objects.get(pk=user).username
+        return jsonify({'authenticated': True}), 200   
+
+    except DoesNotExist:
+        # If the user is not found
+        return jsonify({"error": "User not found"}), 404
+    except jwt.ExpiredSignatureError:
+        # Token has expired
+        return jsonify({'authenticated': False}), 200
+    except jwt.InvalidTokenError:
+        # Invalid token
+        return jsonify({'authenticated': False}), 200
+    except Exception as e:
+        # Handle any other exceptions
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     db_connect()
     try:

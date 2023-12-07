@@ -1,6 +1,7 @@
 // src/pages/vote.js
 import React, { useState } from 'react';
 import Image from 'next/image';
+import { isAuthenticated } from "./auth";
 
 import styles from './vote.module.css';
 
@@ -43,6 +44,27 @@ export default function Vote() {
     </div>
 
   );
+}
+
+
+export async function getServerSideProps(context) {
+  const { req } = context;
+  const token = req.cookies["token"];
+
+  if (!await isAuthenticated(token)) {
+    // If the user is not authenticated, redirect them to the login page
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  // If the user is authenticated, render the Vote page
+  return {
+    props: {}, // Will be passed to the page component as props
+  };
 }
 
 
