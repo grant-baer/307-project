@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import Image from 'next/image';
 
 const Leaderboard = () => {
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const modalRef = useRef(null);
 
   useEffect(() => {
     // Make a GET request to your Flask server to fetch the top 20 images
@@ -25,16 +26,24 @@ const Leaderboard = () => {
     setSelectedImage(null);
   };
 
+  const handleModalClick = (e) => {
+    // Check if the click event occurred outside the image modal
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      closeImageModal();
+    }
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {images.map((image) => (
-            <div key={image.id} className="bg-white p-4 rounded-lg shadow-md">
-              <div
-                className="w-full h-64 relative rounded-lg mb-4 cursor-pointer"
-                onClick={() => openImageModal(image)}
-              >
+            <div
+              key={image.id}
+              className="bg-white p-4 rounded-lg shadow-md cursor-pointer transition-transform transform hover:scale-105"
+              onClick={() => openImageModal(image)}
+            >
+              <div className="w-full h-64 relative rounded-lg mb-4">
                 <Image
                   src={image.url}
                   alt='Votable Image'
@@ -52,8 +61,11 @@ const Leaderboard = () => {
       </div>
 
       {selectedImage && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-80">
-          <div className="bg-white p-4 rounded-lg shadow-md">
+        <div
+          className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-80"
+          onClick={handleModalClick}
+        >
+          <div className="bg-white p-4 rounded-lg shadow-md" ref={modalRef}>
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
               onClick={closeImageModal}
