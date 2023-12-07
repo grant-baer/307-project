@@ -51,7 +51,7 @@ class Image(Document):
     creator = ReferenceField(User, required=True)
     prompt = StringField(required=True)
     url = StringField(required=True)
-    elo = IntField(required=False)
+    elo = IntField(required=True)
 
     meta = {"collection": "images"}
 
@@ -111,7 +111,8 @@ def create_image(data):
         image = Image(
             creator=data["creator"],
             prompt=data["prompt"],
-            url=data["url"]
+            url=data["url"],
+            elo=1000
         )
         image.save()
 

@@ -48,6 +48,7 @@ def get_random_image():
     try:
         # Randomly select an image
         image = Image.objects.aggregate([{"$sample": {"size": 1}}]).next()
+        print(image)
         return jsonify(image), 200
     except StopIteration:
         # No images found in the database
