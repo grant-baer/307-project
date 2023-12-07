@@ -50,7 +50,7 @@ const Leaderboard = () => {
                   layout="fill"
                   objectFit="cover"
                 />
-                <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-40 text-white">
+                <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-0 text-white">
                   <p className="text-lg font-semibold">{image.creator}</p>
                   <p className="text-gray-100 font-semibold">ELO: {image.elo}</p>
                 </div>
