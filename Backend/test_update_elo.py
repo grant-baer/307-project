@@ -28,3 +28,12 @@ with app.test_client() as client:
         print("Update Image ELO:", update_elo_response.json)
     else:
         print("No random image found for ELO update test.")
+
+    # Test top_elo_images
+    top_elo_images_response = client.get("/top_elo_images")
+    print("Top ELO Images:", top_elo_images_response.json)
+
+    if top_elo_images_response.status_code == 200:
+        print("Successfully retrieved top ELO images.")
+    else:
+        print(f"Failed to retrieve top ELO images. Status code: {top_elo_images_response.status_code}")

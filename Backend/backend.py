@@ -147,6 +147,19 @@ def fetch_portfolio():
         # Handle any other exceptions
         return jsonify({"error": str(e)}), 500
 
+@app.route("/top_elo_images", methods=["GET"])
+def top_elo_images():
+    try:
+        # Fetch the top 20 images with the highest ELO, or fewer if less than 20 images are available
+        top_images = Image.objects.order_by('-elo').limit(20)
+
+        # Serialize the results into a JSON-friendly format
+        results = json.loads(json_util.dumps(top_images))
+
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route("/login", methods=["POST"])
 def login():
