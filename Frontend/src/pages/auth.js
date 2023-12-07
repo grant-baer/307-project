@@ -1,21 +1,21 @@
 // auth.js (utility file)
 
 // Import the required libraries
-import jwt from "jsonwebtoken";
+import axios from 'axios';
 
-// Secret key used to sign the JWT tokens (should match the key used in your backend)
-const JWT_SECRET = "CHANGE_TO_SECURE_KEY";
-
-// Function to check if the user is authenticated based on the JWT token
-export function isAuthenticated(token) {
+// Function to check if the user is authenticated based on the backend verification
+export async function isAuthenticated(token) {
   try {
-    // Verify and decode the JWT token
-    const decodedToken = jwt.verify(token, JWT_SECRET);
+    // make axios get request sending cookie.
+    const response = await axios.get('http://localhost:5000/api/verify_user', {
+      headers: {
+        Authorization: `Bearer ${token}`, // Send the JWT token in the Authorization header
+      },
+    });
 
-    // If the verification is successful, the user is authenticated
-    return true;
+    return response.data.authenticated;
   } catch (error) {
-    // If there's an error, such as an expired or invalid token, the user is not authenticated
+    // console.error('Error during user verification:', error);
     return false;
   }
 }

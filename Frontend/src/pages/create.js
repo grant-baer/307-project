@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Cookie from "js-cookie";
+import { isAuthenticated } from "./auth";
+
 
 export default function Create() {
   const [text, setText] = useState("");
@@ -19,6 +21,11 @@ export default function Create() {
       await axios.post(
         "http://localhost:5000/generate_image",
         { prompt: text },
+        {
+          headers: {
+              "Authorization": `Bearer ${Cookie.get("token")}`
+          }
+        },
       ).then(response => {
           if (response.data.output) {
             setUrl(response.data.output);
@@ -113,4 +120,25 @@ export default function Create() {
       )}
     </div>
   );
+}
+
+
+export async function getServerSideProps(context) {
+  const { req } = context;
+  const token = req.cookies["token"]; // Replace "your_cookie_name" with your actual cookie name
+
+  if (!await isAuthenticated(token)) {
+    // If the user is not authenticated, redirect them to the login page
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  // If the user is authenticated, render the Portfolio page
+  return {
+    props: {}, // Will be passed to the page component as props
+  };
 }
