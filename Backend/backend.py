@@ -241,7 +241,7 @@ def register():
         "password": hashed_password,
         "portfolio": portfolio,
     }
-    response = db_acess.check_user(user_data)
+    response = db_access.check_user(user_data)
     if response.status_code == 401:
         print(f"responsey={response.message}")
         return (
