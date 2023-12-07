@@ -152,7 +152,7 @@ def fetch_portfolio():
 def top_elo_images():
     try:
         # Fetch the top 20 images with the highest ELO, or fewer if less than 20 images are available
-        top_images = list(Image.objects.order_by('-elo').limit(20))
+        top_images = list(Image.objects.order_by('-elo').limit(100))
 
         # Serialize the MongoDB documents, including ObjectId fields, in the list
         serialized_images = []
