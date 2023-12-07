@@ -34,7 +34,6 @@ class TestDBAccess(unittest.TestCase):
         response = create_user(data)
         assert response.status_code == 500
 
-
     # TEST check_user
 
     def test_check_user_existing_username(self):
@@ -67,7 +66,6 @@ class TestDBAccess(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.message, "User found.")
 
-
     # TEST create_image (3)
 
     @patch("db_access.User")
@@ -75,9 +73,9 @@ class TestDBAccess(unittest.TestCase):
     def test_create_image_success(self, MockImage, MockUser):
         # Mocking the save method of the Image model
         db_connect()
-        username = {"username" : "DONT_DELETE_CASEY"}
+        username = {"username": "DONT_DELETE_CASEY"}
         user = get_user(username)
-        
+
         image_data = {
             "creator": "6570d488e712f054d18ebebc",
             "prompt": "test_password",
@@ -85,7 +83,6 @@ class TestDBAccess(unittest.TestCase):
         }
         response = create_image(image_data)
         assert response.status_code == 201
-
 
     @patch("db_access.User")
     def test_create_image_failure(self, MockUser):
@@ -109,7 +106,7 @@ class TestDBAccess(unittest.TestCase):
         mock_user_instance.side_effect = DoesNotExist
 
         image_data = {
-            "creator": "", # username will never exist
+            "creator": "",  # username will never exist
             "prompt": "test_prompt",
             "data": "test_data",
         }
@@ -120,8 +117,25 @@ class TestDBAccess(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.message, "Creator user does not exist.")
 
-    # TEST get_portfolio (3)
+    @patch("db_access.Image")
+    @patch("db_access.User")
+    def test_create_image_internal_error(self, MockUser, MockImage):
+        # Mocking the User.objects.get method to raise DoesNotExist
+        mock_user_instance = MockUser.objects.get
+        mock_user_instance.side_effect = Exception("test exception")
 
+        image_data = {
+            "creator": "",  # username will never exist
+            "prompt": "test_prompt",
+            "data": "test_data",
+        }
+
+        response = create_image(image_data)
+
+        # Assert that the response status code is 404 and the message matches the expected message
+        self.assertEqual(response.status_code, 500)
+
+    # TEST get_portfolio (3)
 
 
 if __name__ == "__main__":
