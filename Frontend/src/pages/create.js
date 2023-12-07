@@ -18,6 +18,7 @@ export default function Create() {
     try {
       setGenerating(true);
       setFailed(false);
+      setImageAccepted(null);
       await axios.post(
         "http://localhost:5000/generate_image",
         { prompt: text },
@@ -37,6 +38,8 @@ export default function Create() {
       }).then(() => setGenerating(false));
 
     } catch (error) {
+      setFailed(true);
+      setGenerating(false);
       console.error("Error:", error);
     }
   };
