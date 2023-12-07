@@ -34,12 +34,10 @@ Picture Perfect is an AI-powered game designed to challenge your creativity! Inp
 
 1. Make sure you have [Python](https://www.python.org/downloads/) and [Node](https://nodejs.org/en/download) environments set up (this includes npm and pip3). The latest stable releases should be fine as of December 2023, but this project uses Node v20 and Python 3.10.
 
-2. Installing the frontend packages:
-   From root:
+2. Installing the frontend packages. From root:
    - `cd Frontend`
    - `npm install`
-3. Installing the backend packages:
-   From root:
+3. Installing the backend packages. From root:
 
    - `cd Backend`
    - `pip3 install -r requirements.txt`
