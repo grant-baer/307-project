@@ -30,6 +30,22 @@ Picture Perfect is an AI-powered game designed to challenge your creativity! Inp
 [HTML-URL]: https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white
 [CSS-URL]: https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white
 
+## Installation and Setup
+
+1. Make sure you have [Python](https://www.python.org/downloads/) and [Node](https://nodejs.org/en/download) environments set up (this includes npm and pip3). The latest stable releases should be fine as of December 2023, but this project uses Node v20 and Python 3.10.
+
+2. Installing the frontend packages:
+   From root:
+   - `cd Frontend`
+   - `npm install`
+3. Installing the backend packages:
+   From root:
+
+   - `cd Backend`
+   - `pip3 install -r requirements.txt`
+
+4. Currently, the frontend is hosted locally. Run it with the command `npm run dev` in the Frontend folder.
+
 ## UI Prototype
 
 ## Code Coverage
