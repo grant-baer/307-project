@@ -36,4 +36,6 @@ with app.test_client() as client:
     if top_elo_images_response.status_code == 200:
         print("Successfully retrieved top ELO images.")
     else:
-        print(f"Failed to retrieve top ELO images. Status code: {top_elo_images_response.status_code}")
+        print(
+            f"Failed to retrieve top ELO images.
+            Status code: {top_elo_images_response.status_code}")

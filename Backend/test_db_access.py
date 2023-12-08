@@ -113,7 +113,8 @@ class TestDBAccess(unittest.TestCase):
 
         response = create_image(image_data)
 
-        # Assert that the response status code is 404 and the message matches the expected message
+        # Assert that the response status code is 404 and the message matches
+        # the expected message
         self.assertEqual(response.status_code, 404)
         self.assertEqual(response.message, "Creator user does not exist.")
 
@@ -132,7 +133,8 @@ class TestDBAccess(unittest.TestCase):
 
         response = create_image(image_data)
 
-        # Assert that the response status code is 404 and the message matches the expected message
+        # Assert that the response status code is 404 and the message matches
+        # the expected message
         self.assertEqual(response.status_code, 500)
 
     # TEST get_portfolio (3)
