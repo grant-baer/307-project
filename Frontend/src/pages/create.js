@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Image from "next/image";
 import Cookie from "js-cookie";
-import { isAuthenticated } from "../../public/auth";
+import { isAuthenticated } from "./auth";
 
 
 export default function Create() {

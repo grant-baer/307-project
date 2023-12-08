@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { isAuthenticated } from "../../public/auth";
+import { isAuthenticated } from "./auth";
 
 
 export default function InitialLanding() {

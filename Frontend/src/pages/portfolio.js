@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { isAuthenticated } from "../../public/auth";
+import { isAuthenticated } from "./auth";
 import Cookie from "js-cookie";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
