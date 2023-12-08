@@ -46,7 +46,13 @@ Picture Perfect is an AI-powered game designed to challenge your creativity! Inp
 
 ## UI Prototype
 
+![Picture Perfect UI Prototype](./docs/Picture%20Perfect%20Leaderboard%20Page.png)
+
 ## Code Coverage
+
+As of Dec. 7 @ 8 PM PST
+
+![Picture Perfect Code Coverage](./docs/Picture%20Perfect%20Code%20Coverage.png)
 
 ## Code Style Guide
 
