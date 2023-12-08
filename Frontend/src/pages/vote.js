@@ -1,39 +1,113 @@
 // src/pages/vote.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { isAuthenticated } from "./auth";
-
+import axios from 'axios';
 import styles from './vote.module.css';
 
+const backendUrl = "http://localhost:5000"; // Assuming your backend runs on port 5000
+
+/**
+ * Calculate the new Elo rating.
+ * @param {number} currentElo - Current Elo rating of the image.
+ * @param {number} opponentElo - Current Elo rating of the opponent image.
+ * @param {boolean} isWinner - Whether the image is the winner or not.
+ * @param {number} kFactor - The K-factor used in Elo rating (common values: 16, 32, 64).
+ * @returns {number} - The new Elo rating.
+ */
+const calculateNewElo = (currentElo, opponentElo, isWinner, kFactor = 32) => {
+  // Convert ratings to a scale where the lowest possible rating is 1
+  const rating = Math.max(currentElo, 1);
+  const opponentRating = Math.max(opponentElo, 1);
+
+  // Calculate the expected score
+  const expectedScore = 1 / (1 + Math.pow(10, (opponentRating - rating) / 400));
+
+  // Calculate the actual score
+  const actualScore = isWinner ? 1 : 0;
+
+  // Calculate the new rating
+  const newRating = rating + kFactor * (actualScore - expectedScore);
+
+  return Math.round(newRating);
+};
 
 export default function Vote() {
-  const [images, setImages] = useState([{ src: '/image1.png', id: 1 }, { src: '/image1.png', id: 2 }]);
+  const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleImageClick = (id) => {
-    setSelectedImage(id);
-    setTimeout(() => {
-      setImages([{ src: '/image1.png', id: 3 }, { src: '/image1.png', id: 4 }]);
-      setSelectedImage(null);
-    }, 2000); // 2 seconds delay
+  useEffect(() => {
+    fetchTwoDistinctImages();
+  }, []);
+
+  const fetchRandomImage = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/get_random_image`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching random image", error);
+    }
   };
 
+  const fetchTwoDistinctImages = async () => {
+    let image1 = await fetchRandomImage();
+    let image2 = await fetchRandomImage();
+
+    while (image1._id.$oid === image2._id.$oid) {
+      image2 = await fetchRandomImage(); // Fetch again if images are same
+    }
+
+    setImages([image1, image2]);
+  };
+
+  const handleImageClick = async (id) => {
+    setSelectedImage(id);
+
+ 
+
+    const winner = images.find(image => image._id.$oid === id);
+    const loser = images.find(image => image._id.$oid !== id);
+  
+    const newEloWinner = calculateNewElo(winner.elo, loser.elo, true);
+    const newEloLoser = calculateNewElo(loser.elo, winner.elo, false);
+  
+    await updateElo(winner._id.$oid, newEloWinner, loser._id.$oid, newEloLoser);
+  
+    setTimeout(() => {
+      fetchTwoDistinctImages();
+      setSelectedImage(null);
+    }, 800); // 2 seconds delay for the next vote
+  };
+
+  const updateElo = async (winnerId, newEloWinner, loserId, newEloLoser) => {
+    try {
+      await axios.post(`${backendUrl}/update_image_elo`, {
+        imageIdOne: winnerId,
+        newEloOne: newEloWinner,
+        imageIdTwo: loserId,
+        newEloTwo: newEloLoser
+      });
+    } catch (error) {
+      console.error("Error updating ELO", error);
+    }
+  };
+  
   return (
     <div className={styles.container}>
       {images.map((image) => (
         <div
-          key={image.id}
+          key={image._id.$oid}
           className={`${styles.imageWrapper} ${
             selectedImage === null
               ? styles.default
-              : selectedImage === image.id
+              : selectedImage === image._id.$oid
               ? styles.winning
               : styles.losing
           }`}
-          onClick={() => handleImageClick(image.id)}
+          onClick={() => handleImageClick(image._id.$oid)}
         >
           <Image
-            src={image.src}
+            src={image.url}
             alt='Votable Image'
             width={1024}
             height={1024}
@@ -42,9 +116,10 @@ export default function Vote() {
         </div>
       ))}
     </div>
-
   );
 }
+
+
 
 
 export async function getServerSideProps(context) {
@@ -67,79 +142,3 @@ export async function getServerSideProps(context) {
   };
 }
 
-
-// import Image from "next/image";
-// import { useState, useEffect } from "react";
-// import eloRating from "elo-rating";
-// import axios from "axios"; // Import axios for API requests
-
-// export default function Vote() {
-//   const [eloOne, setEloOne] = useState(1000);
-//   const [eloTwo, setEloTwo] = useState(1000);
-//   const [imageOne, setImageOne] = useState({});
-//   const [imageTwo, setImageTwo] = useState({});
-
-//   // Fetch random images from backend
-//   const fetchRandomImages = async () => {
-//     try {
-//       const responseOne = await axios.get("http://localhost:5000/get_random_image");
-//       const responseTwo = await axios.get("http://localhost:5000/get_random_image");
-//       setImageOne(responseOne.data);
-//       setImageTwo(responseTwo.data);
-//       // Update ELOs if needed
-//       setEloOne(responseOne.data.votes || 1000);
-//       setEloTwo(responseTwo.data.votes || 1000);
-//     } catch (error) {
-//       console.error("Error fetching images:", error);
-//     }
-//   };
-
-//   // Function to calculate ELO exchange and update backend
-//   const vote = async (winner) => {
-//     let result = eloRating.calculate(eloOne, eloTwo, winner === 1);
-//     setEloOne(result.playerRating);
-//     setEloTwo(result.opponentRating);
-
-//     // API call to update the ELO rating in the backend
-//     // You need to create this endpoint in your backend
-//     await axios.post("http://localhost:5000/update_image_elo", {
-//       imageIdOne: imageOne.id,
-//       newEloOne: result.playerRating,
-//       imageIdTwo: imageTwo.id,
-//       newEloTwo: result.opponentRating,
-//     });
-//   };
-
-//   // Load new images on each page load
-//   useEffect(() => {
-//     fetchRandomImages();
-//   }, []);
-
-//   return (
-//     <div className="p-6">
-//       <h1 className="text-4xl font-bold mb-6 text-center text-gray-700">
-//         Voting
-//       </h1>
-//       <div className="flex justify-center gap-10 mb-4">
-//         <div className="text-center">
-//           <Image
-//             src={imageOne.url}
-//             alt="Image One"
-//             className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer"
-//             onClick={() => vote(1)}
-//           />
-//           <p className="mt-2 text-lg font-semibold">ELO: {eloOne}</p>
-//         </div>
-//         <div className="text-center">
-//           <Image
-//             src={imageTwo.url}
-//             alt="Image Two"
-//             className="w-60 h-60 object-cover rounded-lg shadow-lg hover:shadow-2xl cursor-pointer"
-//             onClick={() => vote(2)}
-//           />
-//           <p className="mt-2 text-lg font-semibold">ELO: {eloTwo}</p>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
