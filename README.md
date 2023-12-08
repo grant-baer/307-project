@@ -7,7 +7,7 @@
 
 ### Description
 
-Picture Perfect is an AI-powered game designed to challenge your creativity! Input any text-based prompt you can imagine and get back a realistic image. The better the prompt, the better the image! Once you have prompt engineered to your heart's content, check out the voting page where images compete for your vote, king of the hill style. Check out the leaderboard to see how you fare in comparison to other PicPerfers!
+Picture Perfect is an AI-powered game designed to challenge your creativity! Input any text-based prompt you can imagine and get back a realistic image. The better the prompt, the better the image! Once you have prompt engineered to your heart's content, check out the voting page where images compete for your vote. Check out the leaderboard to see how you fare in comparison to other PicPerfers!
 
 ### Tech Stack
 
