@@ -78,8 +78,8 @@ const Leaderboard = () => {
               width={800}
               height={800}
             />
-            <p className="text-lg font-semibold mt-2">{selectedImage.creator}</p>
-            <p className="text-gray-600 font-semibold">ELO: {selectedImage.elo}</p>
+            <p className="text-lg text-gray-800 mt-2">"{selectedImage.prompt}" ~{selectedImage.creator}</p>
+
           </div>
         </div>
       )}

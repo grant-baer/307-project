@@ -178,6 +178,7 @@ def top_elo_images():
             image_data = {
                 "id": str(image.id),
                 "creator": creator_username,
+                "prompt": image.prompt,
                 "url": image.url,
                 "elo": image.elo,
             }
