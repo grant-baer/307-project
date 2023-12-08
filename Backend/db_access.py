@@ -26,7 +26,7 @@ app = Flask(__name__)
 def db_connect(DB_URL=None):
     # MongoDB connection
     mongo_uri = DB_URL or os.environ.get("MONGO_URI")
-    connect(host=mongo_uri)
+    connect(alias="default", host=mongo_uri)
     return True
 
 
