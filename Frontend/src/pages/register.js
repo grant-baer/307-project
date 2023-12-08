@@ -93,8 +93,8 @@ const Register = () => {
     try {
       console.log("try");
       const response = await axios.post(
-        "http://localhost:5000/register",
-        formData,
+        "https://picture-perfect.azurewebsites.net/register",
+        formData
       );
       router.push("/login");
       return response;

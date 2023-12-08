@@ -4,7 +4,6 @@ import Image from "next/image";
 import Cookie from "js-cookie";
 import { isAuthenticated } from "./auth";
 
-
 export default function Create() {
   const [text, setText] = useState("");
   const [url, setUrl] = useState("");
@@ -19,15 +18,17 @@ export default function Create() {
     setGenerating(true);
     setFailed(false);
     setImageAccepted(null);
-    await axios.post(
-      "http://localhost:5000/generate_image",
-      { prompt: text },
-      {
-        headers: {
-            "Authorization": `Bearer ${Cookie.get("token")}`
+    await axios
+      .post(
+        "https://picture-perfect.azurewebsites.net/generate_image",
+        { prompt: text },
+        {
+          headers: {
+            Authorization: `Bearer ${Cookie.get("token")}`,
+          },
         }
-      },
-    ).then(response => {
+      )
+      .then((response) => {
         if (response.data.output) {
           setUrl(response.data.output);
           setImageAccepted(null); // Reset the decision state when a new image is fetched
@@ -35,34 +36,40 @@ export default function Create() {
           setFailed(true);
           console.error(response.data.error);
         }
-    }).catch((error) => {
+      })
+      .catch((error) => {
         setFailed(true);
         console.error("Error:", error);
-    }).then(() => {
+      })
+      .then(() => {
         setGenerating(false);
-    });
+      });
   };
 
   const handleAccept = async (e) => {
     e.preventDefault();
 
     setAccepting(true);
-    await axios.post("http://localhost:5000/store_image",
+    await axios
+      .post(
+        "https://picture-perfect.azurewebsites.net/store_image",
         {
-            "prompt": text,
-            "url": url
+          prompt: text,
+          url: url,
         },
         {
-            headers: {
-                "Authorization": `Bearer ${Cookie.get("token")}`
-            }
-        }).catch((error) => console.error("Error: ", error))
-        .then(() => {
-            setUrl("");
-            setAccepting(false);
-            setImageAccepted(true);
-        });
-  }
+          headers: {
+            Authorization: `Bearer ${Cookie.get("token")}`,
+          },
+        }
+      )
+      .catch((error) => console.error("Error: ", error))
+      .then(() => {
+        setUrl("");
+        setAccepting(false);
+        setImageAccepted(true);
+      });
+  };
 
   const handleReject = () => {
     setImageAccepted(false);
@@ -131,12 +138,11 @@ export default function Create() {
   );
 }
 
-
 export async function getServerSideProps(context) {
   const { req } = context;
   const token = req.cookies["token"];
 
-  if (!await isAuthenticated(token)) {
+  if (!(await isAuthenticated(token))) {
     // If the user is not authenticated, redirect them to the login page
     return {
       redirect: {

@@ -5,7 +5,7 @@ import { isAuthenticated } from "./auth";
 import axios from "axios";
 import styles from "./vote.module.css";
 
-const backendUrl = "http://localhost:5000"; // Assuming your backend runs on port 5000
+const backendUrl = "https://picture-perfect.azurewebsites.net"; // Assuming your backend runs on port 5000
 
 /**
  * Calculate the new Elo rating.

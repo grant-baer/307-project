@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import Image from 'next/image';
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import Image from "next/image";
 
 const Leaderboard = () => {
   const [images, setImages] = useState([]);
@@ -9,7 +9,8 @@ const Leaderboard = () => {
 
   useEffect(() => {
     // Make a GET request to your Flask server to fetch the top 20 images
-    axios.get('http://localhost:5000/top_elo_images')
+    axios
+      .get("https://picture-perfect.azurewebsites.net/top_elo_images")
       .then((response) => {
         setImages(response.data);
       })
@@ -47,13 +48,17 @@ const Leaderboard = () => {
                 <Image
                   className="rounded-lg"
                   src={image.url}
-                  alt='Votable Image'
+                  alt="Votable Image"
                   width={1024}
                   height={1024}
                 />
                 <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-0 text-white">
-                  <p className="text-lg font-semibold drop-shadow-[1px_1px_0.5px_rgba(0,0,0,1)]">{image.creator}</p>
-                  <p className="text-gray-100 font-semibold drop-shadow-[1px_1px_0.5px_rgba(0,0,0,1)]">{image.elo}</p>
+                  <p className="text-lg font-semibold drop-shadow-[1px_1px_0.5px_rgba(0,0,0,1)]">
+                    {image.creator}
+                  </p>
+                  <p className="text-gray-100 font-semibold drop-shadow-[1px_1px_0.5px_rgba(0,0,0,1)]">
+                    {image.elo}
+                  </p>
                 </div>
               </div>
             </div>
@@ -70,11 +75,10 @@ const Leaderboard = () => {
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
               onClick={closeImageModal}
-            >
-            </button>
+            ></button>
             <Image
               src={selectedImage.url}
-              alt='Votable Image'
+              alt="Votable Image"
               width={800}
               height={800}
             />

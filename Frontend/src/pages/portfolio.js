@@ -13,7 +13,7 @@ export default function Portfolio() {
   useEffect(() => {
     async function fetch_portfolio() {
       await axios
-        .get("http://localhost:5000/fetch_portfolio", {
+        .get("https://picture-perfect.azurewebsites.net/fetch_portfolio", {
           headers: {
             Authorization: `Bearer ${Cookie.get("token")}`,
           },
