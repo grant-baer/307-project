@@ -21,13 +21,17 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+db_lock = 0
 
 
+@app.before_request
 def db_connect(DB_URL=None):
-    # MongoDB connection
-    mongo_uri = DB_URL or os.environ.get("MONGO_URI")
-    connect(alias="default", host=mongo_uri)
-    return True
+    if not db_lock:
+        # MongoDB connection
+        mongo_uri = DB_URL or os.environ.get("MONGO_URI")
+        connect(alias="default", host=mongo_uri)
+        db_lock = 1
+        return True
 
 
 class Response:
