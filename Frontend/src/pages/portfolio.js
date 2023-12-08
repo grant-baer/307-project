@@ -45,23 +45,24 @@ export default function Portfolio() {
     <div className="bg-gray-100 min-h-screen py-8">
       <div className="container mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {portfolio && portfolio.map((image) => (
-            <div
-              key={image.id}
-              className="transition-transform transform hover:scale-105"
-              onClick={() => openImageModal(image)}
-            >
-              <div className="w-full h-full relative rounded-lg">
-                <Image
-                  className="rounded-lg"
-                  src={image.url}
-                  alt='Votable Image'
-                  width={1024}
-                  height={1024}
-                />
+          {portfolio &&
+            portfolio.map((image) => (
+              <div
+                key={image.id}
+                className="transition-transform transform hover:scale-105"
+                onClick={() => openImageModal(image)}
+              >
+                <div className="w-full h-full relative rounded-lg">
+                  <Image
+                    className="rounded-lg"
+                    src={image.url}
+                    alt="Votable Image"
+                    width={1024}
+                    height={1024}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
@@ -74,28 +75,26 @@ export default function Portfolio() {
             <button
               className="bg-white absolute top-2 right-2 text-gray-600 hover:text-gray-900"
               onClick={closeImageModal}
-            >
-            </button>
+            ></button>
             <Image
               src={selectedImage.url}
-              alt='Votable Image'
+              alt="Votable Image"
               width={500}
               height={500}
             />
-            <p className="m-4">"{selectedImage.prompt}"</p>
+            <p className="m-4">&quot;{selectedImage.prompt}</p>
           </div>
         </div>
       )}
     </div>
   );
-};
-
+}
 
 export async function getServerSideProps(context) {
   const { req } = context;
   const token = req.cookies["token"];
 
-  if (!await isAuthenticated(token)) {
+  if (!(await isAuthenticated(token))) {
     // If the user is not authenticated, redirect them to the login page
     return {
       redirect: {
