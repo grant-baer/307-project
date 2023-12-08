@@ -18,3 +18,4 @@ python-dotenv==1.0.0
 requests==2.31.0
 urllib3==2.1.0
 Werkzeug==3.0.1
+coverage==7.3.2
