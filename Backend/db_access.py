@@ -23,7 +23,6 @@ load_dotenv()
 app = Flask(__name__)
 
 
-@app.before_request
 def db_connect(DB_URL=None):
     # MongoDB connection
     mongo_uri = DB_URL or os.environ.get("MONGO_URI")
