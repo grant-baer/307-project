@@ -1,7 +1,7 @@
 // src/pages/vote.js
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { isAuthenticated } from "./auth";
+import { isAuthenticated } from "../../public/auth";
 import axios from 'axios';
 import styles from './vote.module.css';
 
