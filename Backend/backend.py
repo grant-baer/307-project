@@ -32,6 +32,7 @@ app.config["CORS_HEADERS"] = "Content-Type"
 app.config["JWT_SECRET_KEY"] = "CHANGE_TO_SECURE_KEY"
 jwt = JWTManager(app)
 
+
 @app.route("/generate_image", methods=["POST"])
 @jwt_required()
 def generate_image():
@@ -97,9 +98,13 @@ def store_image():
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
-    image_res = requests.post("https://api.imgur.com/3/image",
-        data={"image": data["url"]},
-        headers={"Authorization": "Client-ID " + os.environ["IMGUR_CLIENT_ID"]})
+    image_res = requests.post(
+        "https://api.imgur.com/3/image",
+        data={
+            "image": data["url"]},
+        headers={
+            "Authorization": "Client-ID " +
+            os.environ["IMGUR_CLIENT_ID"]})
 
     # Prepare the data for creating an image
     image_data = {
@@ -151,10 +156,12 @@ def fetch_portfolio():
 @app.route("/top_elo_images", methods=["GET"])
 def top_elo_images():
     try:
-        # Fetch the top 20 images with the highest ELO, or fewer if less than 20 images are available
+        # Fetch the top 20 images with the highest ELO, or fewer if less than
+        # 20 images are available
         top_images = list(Image.objects.order_by('-elo').limit(100))
 
-        # Serialize the MongoDB documents, including ObjectId fields, in the list
+        # Serialize the MongoDB documents, including ObjectId fields, in the
+        # list
         serialized_images = []
         for image in top_images:
             # Convert ObjectId to a string for JSON serialization
@@ -167,12 +174,18 @@ def top_elo_images():
             except DoesNotExist:
                 creator_username = "Unknown User"
 
-            image_data = {"id": str(image.id), "creator": creator_username, "url": image.url, "elo": image.elo}
+            image_data = {
+                "id": str(
+                    image.id),
+                "creator": creator_username,
+                "url": image.url,
+                "elo": image.elo}
             serialized_images.append(image_data)
 
         return jsonify(serialized_images), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -299,7 +312,7 @@ def verify_user():
         # Retrieve the user by username
         user = get_jwt_identity()
         temp = User.objects.get(pk=user).username
-        return jsonify({'authenticated': True}), 200   
+        return jsonify({'authenticated': True}), 200
 
     except DoesNotExist:
         # If the user is not found
@@ -313,6 +326,7 @@ def verify_user():
     except Exception as e:
         # Handle any other exceptions
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     db_access.db_connect()

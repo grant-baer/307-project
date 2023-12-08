@@ -66,20 +66,19 @@ def create_user(data):
     )
     try:
         user.save()
-        return Response("User created successfully!", 201,{})
+        return Response("User created successfully!", 201, {})
     except Exception as e:
-        return Response(f"Internal server error {e}", 500,{})
+        return Response(f"Internal server error {e}", 500, {})
 
 
 def get_user(data):
     # only called in backend, assumes user exists
     user = User.objects.get(username=data["username"])
     return Response(
-            "User found.",
-            200,
-            user
-        )
-    
+        "User found.",
+        200,
+        user
+    )
 
 
 def check_user(data):
@@ -117,12 +116,13 @@ def create_image(data):
         image.save()
 
         creator = User.objects.get(pk=data["creator"])
-        
-        # Optionally, you can also append this image to the user's portfolio here
+
+        # Optionally, you can also append this image to the user's portfolio
+        # here
         creator.update(push__portfolio=image)
 
-        return Response("Image created successfully!", 201,{})
+        return Response("Image created successfully!", 201, {})
     except DoesNotExist:
-        return Response("Creator user does not exist.", 404,{})
+        return Response("Creator user does not exist.", 404, {})
     except Exception as e:
-        return Response(f"Internal server error: {e}", 500,{})
+        return Response(f"Internal server error: {e}", 500, {})
