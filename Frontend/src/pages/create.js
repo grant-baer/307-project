@@ -75,7 +75,7 @@ export default function Create() {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter some text"
-          className="border border-gray-300 p-2 rounded w-full mb-4"
+          className="border border-gray-300 p-2 rounded w-full mb-4 text-black"
         />
         <button
           type="submit"
