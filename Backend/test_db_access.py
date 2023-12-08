@@ -79,7 +79,8 @@ class TestDBAccess(unittest.TestCase):
         image_data = {
             "creator": "6570d488e712f054d18ebebc",
             "prompt": "test_password",
-            "data": "example_data",
+            "url": "example_url",
+            "elo": 1000,
         }
         response = create_image(image_data)
         assert response.status_code == 201
@@ -108,7 +109,8 @@ class TestDBAccess(unittest.TestCase):
         image_data = {
             "creator": "",  # username will never exist
             "prompt": "test_prompt",
-            "data": "test_data",
+            "url": "test_url",
+            "elo": 1000,
         }
 
         response = create_image(image_data)
