@@ -31,6 +31,9 @@ def db_connect(DB_URL=None):
     return True
 
 
+db_connect()
+
+
 class Response:
     def __init__(self, message, status_code, data) -> None:
         self.status_code = status_code

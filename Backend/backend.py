@@ -100,8 +100,8 @@ def store_image():
     image_res = requests.post(
         "https://api.imgur.com/3/image",
         data={"image": data["url"]},
-        headers={"Authorization": "Client-ID " +
-                 os.environ["IMGUR_CLIENT_ID"]},
+        headers={"Authorization": "Client-ID "
+                 + os.environ["IMGUR_CLIENT_ID"]},
     )
 
     # Prepare the data for creating an image
@@ -333,7 +333,6 @@ def verify_user():
 
 if __name__ == "__main__":
     print("Starting server...")
-    db_access.db_connect()
     try:
         app.run(port=5000, debug=True)
     except OSError as e:
