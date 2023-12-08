@@ -82,7 +82,7 @@ export default function Portfolio() {
               width={500}
               height={500}
             />
-            <p className="m-4">&quot;{selectedImage.prompt}&quot;</p>
+            <p className="m-4 text-black">&quot;{selectedImage.prompt}&quot;</p>
           </div>
         </div>
       )}

@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-
-
 const NavBar = () => {
+  const [page, setPage] = useState("portfolio");
+
   const handleLogout = () => {
       // Set the 'token' cookie to expire immediately, effectively logging the user out
       document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
-    
+  };
 
- 
+  const handlePage = (page) => {
+      setPage(page);
   };
 
   return (
@@ -30,22 +31,22 @@ const NavBar = () => {
             {/* Primary Navbar items */}
             <div className="hidden md:flex items-center space-x-1">
               <Link href="/vote">
-                <span className={`py-4 px-2 ${window.location.pathname === "/vote" ? "text-blue-400" : "text-gray-300"} font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
+                <span onClick={() => handlePage("vote")} className={`py-4 px-2 ${page === "vote" ? "text-blue-400" : "text-gray-300"} font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Vote
                 </span>
               </Link>
               <Link href="/portfolio">
-                <span className={`py-4 px-2 ${window.location.pathname === "/portfolio" ? "text-blue-400" : "text-gray-300"} text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
+                <span onClick={() => handlePage("portfolio")} className={`py-4 px-2 ${page === "portfolio" ? "text-blue-400" : "text-gray-300"} font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Portfolio
                 </span>
               </Link>
               <Link href="/leaderboard">
-                <span className={`py-4 px-2 ${window.location.pathname === "/leaderboard" ? "text-blue-400" : "text-gray-300"} text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
+                <span onClick={() => handlePage("leaderboard")} className={`py-4 px-2 ${page === "leaderboard" ? "text-blue-400" : "text-gray-300"} font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Leaderboard
                 </span>
               </Link>
               <Link href="/create">
-                <span className={`py-4 px-2 ${window.location.pathname === "/create" ? "text-blue-400" : "text-gray-300"} text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
+                <span onClick={() => handlePage("create")} className={`py-4 px-2 ${page === "create" ? "text-blue-400" : "text-gray-300"} font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Create
                 </span>
               </Link>
