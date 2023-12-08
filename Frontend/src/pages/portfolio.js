@@ -26,14 +26,17 @@ export default function Portfolio() {
 
   return (
     <div className="bg-gray-100 min-h-screen p-6">
-      <h1 className="text-2xl mb-4">Portfolio</h1>
-      <div className="grid grid-cols-5 gap-4 content-stretch">
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
         {portfolio && portfolio.map((image) =>
+          <div className="w-full h-64 relative rounded-lg mb-4">
+
             <Image src={image.url}
                loader={() => image.url}
                height={1024}
                width={1024}
-            />)}
+            /></div>)}
       </div>
     </div>
   );
