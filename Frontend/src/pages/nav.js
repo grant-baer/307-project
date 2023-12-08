@@ -30,22 +30,22 @@ const NavBar = () => {
             {/* Primary Navbar items */}
             <div className="hidden md:flex items-center space-x-1">
               <Link href="/vote">
-                <span className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer">
+                <span className={`py-4 px-2 ${window.location.pathname === "/vote" ? "text-blue-400" : "text-gray-300"} font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Vote
                 </span>
               </Link>
               <Link href="/portfolio">
-                <span className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer">
+                <span className={`py-4 px-2 ${window.location.pathname === "/portfolio" ? "text-blue-400" : "text-gray-300"} text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Portfolio
                 </span>
               </Link>
               <Link href="/leaderboard">
-                <span className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer">
+                <span className={`py-4 px-2 ${window.location.pathname === "/leaderboard" ? "text-blue-400" : "text-gray-300"} text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Leaderboard
                 </span>
               </Link>
               <Link href="/create">
-                <span className="py-4 px-2 text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer">
+                <span className={`py-4 px-2 ${window.location.pathname === "/create" ? "text-blue-400" : "text-gray-300"} text-gray-300 font-semibold hover:text-blue-400 transition duration-300 cursor-pointer`}>
                   Create
                 </span>
               </Link>

@@ -10,44 +10,43 @@ export default function Create() {
   const [url, setUrl] = useState("");
   const [isImageAccepted, setImageAccepted] = useState(null); // null = not decided, true = accepted, false = rejected
   const [generating, setGenerating] = useState(false);
+  const [accepting, setAccepting] = useState(false);
   const [failed, setFailed] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      setGenerating(true);
-      setFailed(false);
-      setImageAccepted(null);
-      await axios.post(
-        "http://localhost:5000/generate_image",
-        { prompt: text },
-        {
-          headers: {
-              "Authorization": `Bearer ${Cookie.get("token")}`
-          }
-        },
-      ).then(response => {
-          if (response.data.output) {
-            setUrl(response.data.output);
-            setImageAccepted(null); // Reset the decision state when a new image is fetched
-          } else if (response.data.error) {
-            setFailed(true);
-            console.error(response.data.error);
-          }
-      }).then(() => setGenerating(false));
-
-    } catch (error) {
-      setFailed(true);
-      setGenerating(false);
-      console.error("Error:", error);
-    }
+    setGenerating(true);
+    setFailed(false);
+    setImageAccepted(null);
+    await axios.post(
+      "http://localhost:5000/generate_image",
+      { prompt: text },
+      {
+        headers: {
+            "Authorization": `Bearer ${Cookie.get("token")}`
+        }
+      },
+    ).then(response => {
+        if (response.data.output) {
+          setUrl(response.data.output);
+          setImageAccepted(null); // Reset the decision state when a new image is fetched
+        } else if (response.data.error) {
+          setFailed(true);
+          console.error(response.data.error);
+        }
+    }).catch((error) => {
+        setFailed(true);
+        console.error("Error:", error);
+    }).then(() => {
+        setGenerating(false);
+    });
   };
 
   const handleAccept = async (e) => {
     e.preventDefault();
 
-    setImageAccepted(true);
+    setAccepting(true);
     await axios.post("http://localhost:5000/store_image",
         {
             "prompt": text,
@@ -57,11 +56,17 @@ export default function Create() {
             headers: {
                 "Authorization": `Bearer ${Cookie.get("token")}`
             }
-        }).catch((error) => console.error("Error: ", error))};
+        }).catch((error) => console.error("Error: ", error))
+        .then(() => {
+            setUrl("");
+            setAccepting(false);
+            setImageAccepted(true);
+        });
+  }
 
   const handleReject = () => {
     setImageAccepted(false);
-    setUrl(""); // Clear the image if rejected, or add any other logic if needed
+    setUrl("");
   };
 
   return (
@@ -98,9 +103,10 @@ export default function Create() {
           <div className="mt-4 flex justify-center gap-4">
             <button
               onClick={handleAccept}
-              className="bg-green-500 text-white p-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="bg-green-500 text-white p-2 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:bg-green-300"
+              disabled={accepting}
             >
-              Accept
+              {accepting ? "Accepting..." : "Accept"}
             </button>
             <button
               onClick={handleReject}
@@ -112,10 +118,10 @@ export default function Create() {
         </div>
       )}
 
-      {isImageAccepted === true && (
+      {isImageAccepted === true && accepting === false && (
         <p className="mt-8 text-green-500">Image accepted!</p>
       )}
-      {isImageAccepted === false && (
+      {isImageAccepted === false && accepting === false && (
         <p className="mt-8 text-red-500">Image rejected.</p>
       )}
       {failed === true && (

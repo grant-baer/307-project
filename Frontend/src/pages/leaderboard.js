@@ -40,19 +40,20 @@ const Leaderboard = () => {
           {images.map((image) => (
             <div
               key={image.id}
-              className="bg-white p-4 rounded-lg shadow-md cursor-pointer transition-transform transform hover:scale-105"
+              className="transition-transform transform hover:scale-105"
               onClick={() => openImageModal(image)}
             >
-              <div className="w-full h-64 relative rounded-lg mb-4">
+              <div className="w-full h-full relative rounded-lg">
                 <Image
+                  className="rounded-lg"
                   src={image.url}
                   alt='Votable Image'
-                  layout="fill"
-                  objectFit="cover"
+                  width={1024}
+                  height={1024}
                 />
                 <div className="absolute inset-0 flex flex-col justify-end p-4 bg-black bg-opacity-0 text-white">
-                  <p className="text-lg font-semibold">{image.creator}</p>
-                  <p className="text-gray-100 font-semibold">ELO: {image.elo}</p>
+                  <p className="text-lg font-semibold drop-shadow-[1px_1px_0.5px_rgba(0,0,0,1)]">{image.creator}</p>
+                  <p className="text-gray-100 font-semibold drop-shadow-[1px_1px_0.5px_rgba(0,0,0,1)]">{image.elo}</p>
                 </div>
               </div>
             </div>
@@ -65,12 +66,11 @@ const Leaderboard = () => {
           className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-80"
           onClick={handleModalClick}
         >
-          <div className="bg-white p-4 rounded-lg shadow-md" ref={modalRef}>
+          <div ref={modalRef}>
             <button
               className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"
               onClick={closeImageModal}
             >
-              Close
             </button>
             <Image
               src={selectedImage.url}
@@ -78,7 +78,6 @@ const Leaderboard = () => {
               width={800}
               height={800}
             />
-              <p className="text-lg text-gray-800 mt-2">&quot;{selectedImage.prompt}&quot; ~{selectedImage.creator}</p>
           </div>
         </div>
       )}
