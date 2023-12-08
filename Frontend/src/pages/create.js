@@ -79,7 +79,7 @@ export default function Create() {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded w-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
+          className="bg-blue-500 p-2 rounded w-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-300"
           disabled={generating}
         >
           {generating ? "Generating..." : "Submit"}
