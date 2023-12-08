@@ -100,7 +100,7 @@ def store_image():
     image_res = requests.post(
         "https://api.imgur.com/3/image",
         data={"image": data["url"]},
-        headers={"Authorization": "Client-ID " 
+        headers={"Authorization": "Client-ID "
                  + os.environ["IMGUR_CLIENT_ID"]},
     )
 
