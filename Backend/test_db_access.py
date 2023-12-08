@@ -139,7 +139,34 @@ class TestDBAccess(unittest.TestCase):
         # the expected message
         self.assertEqual(response.status_code, 500)
 
-    # TEST get_portfolio (3)
+    # TEST get_random_image (2)
+    def test_get_random_image_success(self):
+        db_connect()
+        response = get_random_image()
+        assert response.status_code == 200
+
+    @patch("db_access.Image")
+    def test_get_random_image_failure(self, MockImage):
+        MockImage.objects.aggregate.side_effect = Exception("test exception")
+        response = get_random_image()
+        assert response.status_code == 500
+
+    @patch("db_access.Image")
+    def test_get_images_single_success(self, MockImage):
+        MockImage.objects.return_value = MagicMock()
+        response = get_images({"id": 1})
+        assert response.status_code == 200
+
+    @patch("db_access.Image")
+    def test_get_images_single_failure(self, MockImage):
+        MockImage.objects.side_effect = Exception("test exception")
+        response = get_images({"id": 1})
+        assert response.status_code == 500
+
+    def test_get_images_many_success(self):
+        db_connect()
+        response = get_images({"limit": 1})
+        assert response.status_code == 200
 
 
 if __name__ == "__main__":

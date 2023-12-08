@@ -19,8 +19,7 @@ import json
 from datetime import datetime
 
 import db_access
-from db_access import User
-from db_access import Image
+from db_access import User, Image, get_random_image as random_image, get_images
 
 import base64
 
@@ -50,7 +49,7 @@ def generate_image():
 def get_random_image():
     try:
         # Randomly select an image
-        image = Image.objects.aggregate([{"$sample": {"size": 1}}]).next()
+        image = random_image().data
         if image:
             # Serialize the MongoDB document including ObjectId fields
             return json.loads(json_util.dumps(image)), 200
@@ -67,14 +66,14 @@ def update_image_elo():
     data = request.get_json()
     try:
         # Update Image One
-        image_one = Image.objects(id=data["imageIdOne"]).first()
+        image_one = get_images({"id": data["imageIdOne"], "limit": 1}).data
         if not image_one:
             return jsonify({"error": "Image One not found"}), 404
 
         image_one.update(set__elo=data["newEloOne"])
 
         # Update Image Two
-        image_two = Image.objects(id=data["imageIdTwo"]).first()
+        image_two = get_images({"id": data["imageIdTwo"], "limit": 1}).data
         if not image_two:
             return jsonify({"error": "Image Two not found"}), 404
 
@@ -100,17 +99,15 @@ def store_image():
 
     image_res = requests.post(
         "https://api.imgur.com/3/image",
-        data={
-            "image": data["url"]},
-        headers={
-            "Authorization": "Client-ID " +
-            os.environ["IMGUR_CLIENT_ID"]})
+        data={"image": data["url"]},
+        headers={"Authorization": "Client-ID " + os.environ["IMGUR_CLIENT_ID"]},
+    )
 
     # Prepare the data for creating an image
     image_data = {
         "creator": current_user,  # Assuming the creator is the logged-in user
         "prompt": data["prompt"],
-        "url": image_res.json()["data"]["link"]
+        "url": image_res.json()["data"]["link"],
     }
 
     # Call the create_image function from db_access
@@ -136,12 +133,15 @@ def fetch_portfolio():
         portfolio_images = User.objects.get(pk=user).portfolio
 
         # Format the response with the list of images
-        portfolio = [{
-            "image_id": str(image.id),
-            "prompt": image.prompt,
-            "creator": user,
-            "url": image.url
-        } for image in portfolio_images]
+        portfolio = [
+            {
+                "image_id": str(image.id),
+                "prompt": image.prompt,
+                "creator": user,
+                "url": image.url,
+            }
+            for image in portfolio_images
+        ]
 
         return jsonify(portfolio), 200
 
@@ -158,7 +158,7 @@ def top_elo_images():
     try:
         # Fetch the top 20 images with the highest ELO, or fewer if less than
         # 20 images are available
-        top_images = list(Image.objects.order_by('-elo').limit(100))
+        top_images = get_images({"limit": 100}).data
 
         # Serialize the MongoDB documents, including ObjectId fields, in the
         # list
@@ -175,11 +175,11 @@ def top_elo_images():
                 creator_username = "Unknown User"
 
             image_data = {
-                "id": str(
-                    image.id),
+                "id": str(image.id),
                 "creator": creator_username,
                 "url": image.url,
-                "elo": image.elo}
+                "elo": image.elo,
+            }
             serialized_images.append(image_data)
 
         return jsonify(serialized_images), 200
@@ -312,17 +312,17 @@ def verify_user():
         # Retrieve the user by username
         user = get_jwt_identity()
         temp = User.objects.get(pk=user).username
-        return jsonify({'authenticated': True}), 200
+        return jsonify({"authenticated": True}), 200
 
     except DoesNotExist:
         # If the user is not found
         return jsonify({"error": "User not found"}), 404
     except jwt.ExpiredSignatureError:
         # Token has expired
-        return jsonify({'authenticated': False}), 200
+        return jsonify({"authenticated": False}), 200
     except jwt.InvalidTokenError:
         # Invalid token
-        return jsonify({'authenticated': False}), 200
+        return jsonify({"authenticated": False}), 200
     except Exception as e:
         # Handle any other exceptions
         return jsonify({"error": str(e)}), 500
