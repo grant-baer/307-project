@@ -76,7 +76,7 @@ export default function Vote() {
     setTimeout(() => {
       fetchTwoDistinctImages();
       setSelectedImage(null);
-    }, 800); // 2 seconds delay for the next vote
+    }, 400); 
   };
 
   const updateElo = async (winnerId, newEloWinner, loserId, newEloLoser) => {
@@ -94,30 +94,29 @@ export default function Vote() {
   
   return (
     <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
-
-    <div className={styles.container}>
-      {images.map((image) => (
-        <div
-          key={image._id.$oid}
-          className={`${styles.imageWrapper} ${
-            selectedImage === null
-              ? styles.default
-              : selectedImage === image._id.$oid
-              ? styles.winning
-              : styles.losing
-          }`}
-          onClick={() => handleImageClick(image._id.$oid)}
-        >
-          <Image
-            src={image.url}
-            alt='Votable Image'
-            width={1024}
-            height={1024}
-            style={{ width: '100%', height: '100%' }}
-          />
-        </div>
-      ))}
-    </div>
+      <div className={styles.container}>
+        {images.map((image) => (
+          <div
+            key={image._id.$oid}
+            className={`${styles.imageWrapper} ${
+              selectedImage === null
+                ? styles.default
+                : selectedImage === image._id.$oid
+                ? styles.winning
+                : styles.losing
+            } border border-5 border-black opacity-50 hover:scale-105 transform transition duration-50 ease-in-out`}
+            onClick={() => handleImageClick(image._id.$oid)}
+          >
+            <Image
+              src={image.url}
+              alt='Votable Image'
+              width={1024}
+              height={1024}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
