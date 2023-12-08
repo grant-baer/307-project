@@ -9,7 +9,7 @@ export async function isAuthenticated(token) {
     // make axios get request sending cookie.
     const response = await axios.get('http://localhost:5000/api/verify_user', {
       headers: {
-        Authorization: 'Bearer ${token}', // Send the JWT token in the Authorization header
+        Authorization: `Bearer ${token}`, // Send the JWT token in the Authorization header
       },
     });
 
@@ -22,7 +22,7 @@ export async function isAuthenticated(token) {
 const AuthPage = () => {
   return (
     <div>
-      <h1>You shouldn't have gotten here!</h1>
+      <h1>You shouldnt have gotten here!</h1>
       <p>This page is not meant to be accessed directly.</p>
     </div>
   );
