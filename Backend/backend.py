@@ -32,11 +32,6 @@ app.config["JWT_SECRET_KEY"] = "CHANGE_TO_SECURE_KEY"
 jwt = JWTManager(app)
 
 
-@app.before_first_request
-def before_first_request():
-    db_access.db_connect()
-
-
 @app.route("/generate_image", methods=["POST"])
 @jwt_required()
 def generate_image():
