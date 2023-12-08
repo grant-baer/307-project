@@ -93,6 +93,8 @@ export default function Vote() {
   };
   
   return (
+    <div className="bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+
     <div className={styles.container}>
       {images.map((image) => (
         <div
@@ -115,6 +117,7 @@ export default function Vote() {
           />
         </div>
       ))}
+    </div>
     </div>
   );
 }
