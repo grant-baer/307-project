@@ -22,12 +22,15 @@ load_dotenv()
 
 app = Flask(__name__)
 
+CONNECTION = None
 
-def db_connect(DB_URL=None):
+
+@app.before_request
+def db_connect(DB_URL=None, connection=None):
     # MongoDB connection
     mongo_uri = DB_URL or os.environ.get("MONGO_URI")
     connect(alias="default", host=mongo_uri)
-    return True
+    return connection
 
 
 class Response:
