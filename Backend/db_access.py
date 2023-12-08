@@ -21,7 +21,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-# db_lock = 0
 
 
 def db_connect(DB_URL=None):
