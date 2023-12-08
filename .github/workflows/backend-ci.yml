@@ -47,7 +47,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: build
-    env: MONGO_URI = ${{ secrets.MONGO_URI }}
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
     defaults:
       run:
         working-directory: Backend
